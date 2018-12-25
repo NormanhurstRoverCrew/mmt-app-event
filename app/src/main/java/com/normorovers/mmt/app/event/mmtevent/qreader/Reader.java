@@ -7,7 +7,7 @@ import github.nisrulz.qreader.QRDataListener;
 import github.nisrulz.qreader.QREader;
 
 public class Reader {
-	private static QREader qrEader = null;
+	private QREader qrEader = null;
 	private SurfaceView surface = null;
 
 	private long coolOffTime = 0;
@@ -24,22 +24,18 @@ public class Reader {
 
 					String[] splitData = data.split(":");
 
-					if (!splitData[0].equals("MMT19") || splitData.length < 3) {
-						operator.onError();
-					}
-
-					String finalData = "";
+					StringBuilder finalData = new StringBuilder();
 
 					if (splitData.length > 3) {
 						for (int i = 2; i < splitData.length; i++) {
-							finalData += splitData[i];
-							if (i < splitData.length - 1) finalData += ":";
+							finalData.append(splitData[i]);
+							if (i < splitData.length - 1) finalData.append(":");
 						}
 					} else {
-						finalData = splitData[2];
+						finalData = new StringBuilder(splitData[2]);
 					}
 
- 					operator.onDetected(new QRAction(splitData[1], finalData));
+ 					operator.onDetected(new QRAction(splitData[1], finalData.toString()));
 				}
 			}
 		}).facing(QREader.BACK_CAM)

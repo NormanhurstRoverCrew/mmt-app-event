@@ -10,10 +10,4 @@ public interface QRDetected {
 	 */
 	// Called from not main thread. Be careful
 	void onDetected(QRAction payload);
-
-	/**
-	 * On error.
-	 */
-	// Called from not main thread. Be careful
-	void onError();
 }
