@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item android:title="Checkin">
+        <menu>
+            <item
+                android:id="@+id/nav_pre_checkin"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="@string/menu_checkin_camera" />
+            <item
+                android:id="@+id/nav_tickets"
+                android:icon="@drawable/ic_menu_gallery"
+                android:title="@string/menu_tickets" />
+        </menu>
+    </item>
+    <item android:title="Pointscore">
+        <menu>
+            <item
+                android:id="@+id/nav_checkin"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="@string/menu_checkin" />
+            <item
+                android:id="@+id/nav_checkin_manual"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/menu_checkin_manual" />
+        </menu>
+    </item>
+
+</menu>
