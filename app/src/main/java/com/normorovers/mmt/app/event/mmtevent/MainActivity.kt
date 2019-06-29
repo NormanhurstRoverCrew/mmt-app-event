@@ -1,16 +1,14 @@
 package com.normorovers.mmt.app.event.mmtevent
 
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.v4.view.GravityCompat
-import android.support.v7.app.ActionBarDrawerToggle
-import android.view.MenuItem
-import android.support.v4.widget.DrawerLayout
 import android.support.design.widget.NavigationView
+import android.support.v4.view.GravityCompat
+import android.support.v4.widget.DrawerLayout
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
+import android.view.MenuItem
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -21,11 +19,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        val fab: FloatingActionButton = findViewById(R.id.fab)
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val toggle = ActionBarDrawerToggle(
@@ -34,6 +27,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         navView.setNavigationItemSelectedListener(this)
+
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, HomeFragment()).commit()
     }
 
     override fun onBackPressed() {
@@ -64,17 +59,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_pre_checkin -> {
-                // Handle the camera action
+            R.id.nav_base_log -> {
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
+                        BaseFragment()).commit()
+            }
+            R.id.nav_base_log_manual -> {
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
+                        ManualBaseFragment()).commit()
+            }
+            R.id.nav_create_team -> {
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
+                        CheckinFragment()).commit()
             }
             R.id.nav_tickets -> {
-
-            }
-            R.id.nav_checkin -> {
-
-            }
-            R.id.nav_checkin_manual -> {
-
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
+                        TicketsFragment()).commit()
             }
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
