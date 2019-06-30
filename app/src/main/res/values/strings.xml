@@ -14,4 +14,9 @@
     <string name="menu_checkin_manual">Manual Base Check-in</string>
     <string name="menu_base_log">Base Log</string>
     <string name="menu_base_log_manuel">Base Log Manual</string>
+    <string name="menu_teams">Teams</string>
+    <string name="placeholder_registration">Registration</string>
+    <string name="placeholder_title">Title</string>
+    <string name="placeholder_members">Members:</string>
+    <string name="add_ticket">Add Ticket</string>
 </resources>
