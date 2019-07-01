@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "tickets")
 class Ticket(
-        @PrimaryKey val uid: String?,
+        @PrimaryKey(autoGenerate = false) val uid: String,
         @Embedded val user: User) {
 
     override fun toString(): String {

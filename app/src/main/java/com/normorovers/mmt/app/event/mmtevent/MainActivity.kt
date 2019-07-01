@@ -1,87 +1,156 @@
 package com.normorovers.mmt.app.event.mmtevent
 
+import android.app.Application
+import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.auth0.android.Auth0
+import com.auth0.android.authentication.AuthenticationAPIClient
+import com.auth0.android.authentication.AuthenticationException
+import com.auth0.android.authentication.storage.SecureCredentialsManager
+import com.auth0.android.authentication.storage.SharedPreferencesStorage
+import com.auth0.android.provider.AuthCallback
+import com.auth0.android.provider.WebAuthProvider
+import com.auth0.android.result.Credentials
 import com.google.android.material.navigation.NavigationView
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.nav_header_main.view.*
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+	private lateinit var credentialsManager: SecureCredentialsManager
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(R.layout.activity_main)
 
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        val navView: NavigationView = findViewById(R.id.nav_view)
-        val toggle = ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+		val account = Auth0(this)
+		val authentication = AuthenticationAPIClient(account)
+		val storage = SharedPreferencesStorage(this)
+		credentialsManager = SecureCredentialsManager(this, authentication, storage)
 
-        navView.setNavigationItemSelectedListener(this)
 
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, HomeFragment()).commit()
-    }
+		if (!credentialsManager.hasValidCredentials()) {
+			WebAuthProvider.login(account)
+					.withScope("openid profile email offline_access")
+					.withAudience("https://admin.mmt.normorovers.com/")
+					.start(this, authCallback(credentialsManager) { logout() })
+		}
 
-    override fun onBackPressed() {
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
-    }
+		setSupportActionBar(toolbar)
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+		val toggle = ActionBarDrawerToggle(
+				this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+		drawer_layout.addDrawerListener(toggle)
+		toggle.syncState()
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        when (item.itemId) {
-            R.id.nav_base_log -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
-                        BaseFragment()).commit()
-            }
-            R.id.nav_base_log_manual -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
-                        ManualBaseFragment()).commit()
-            }
-            R.id.nav_create_team -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
-                        CheckinFragment()).commit()
-            }
-            R.id.nav_tickets -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
-                        TicketsFragment()).commit()
-            }
-            R.id.nav_teams -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
-                        TeamsFragment()).commit()
-            }
-        }
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        drawerLayout.closeDrawer(GravityCompat.START)
-        return true
-    }
+		nav_view.setNavigationItemSelectedListener(this)
+
+		supportFragmentManager.beginTransaction().replace(R.id.fragment_container, HomeFragment()).commit()
+
+		nav_view.getHeaderView(0).button_logout.setOnClickListener {
+			logout()
+		}
+	}
+
+	fun logout() {
+		logout(application)
+	}
+
+	companion object {
+		fun logout(application: Application) {
+			val account = Auth0(application)
+			val authentication = AuthenticationAPIClient(account)
+			val storage = SharedPreferencesStorage(application)
+			val credentialsManager = SecureCredentialsManager(application, authentication, storage)
+			credentialsManager.clearCredentials()
+
+			//DO NOT CLEAN DATABASES TIME SERIES DB... We might want something from them
+
+			val i = Intent(application, MainActivity::class.java)
+			i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+			application.startActivity(i)
+		}
+	}
+
+	override fun onBackPressed() {
+		val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+		if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+			drawerLayout.closeDrawer(GravityCompat.START)
+		} else {
+			super.onBackPressed()
+		}
+	}
+
+	override fun onCreateOptionsMenu(menu: Menu): Boolean {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		menuInflater.inflate(R.menu.main, menu)
+		return true
+	}
+
+	override fun onOptionsItemSelected(item: MenuItem): Boolean {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		return when (item.itemId) {
+			R.id.action_settings -> true
+			else -> super.onOptionsItemSelected(item)
+		}
+	}
+
+	override fun onNavigationItemSelected(item: MenuItem): Boolean {
+		// Handle navigation view item clicks here.
+		when (item.itemId) {
+			R.id.nav_base_log -> {
+				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
+						BaseFragment()).commit()
+			}
+			R.id.nav_base_log_manual -> {
+				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
+						ManualBaseFragment()).commit()
+			}
+			R.id.nav_create_team -> {
+				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
+						CheckinFragment()).commit()
+			}
+			R.id.nav_tickets -> {
+				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
+						TicketsFragment()).commit()
+			}
+			R.id.nav_teams -> {
+				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
+						TeamsFragment()).commit()
+			}
+		}
+		val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+		drawerLayout.closeDrawer(GravityCompat.START)
+		return true
+	}
+
+	private class authCallback(val credMan: SecureCredentialsManager, val fail: () -> Unit) : AuthCallback {
+		override fun onSuccess(credentials: Credentials) {
+			credMan.saveCredentials(credentials)
+		}
+
+		override fun onFailure(dialog: Dialog) {
+			credMan.clearCredentials()
+			fail()
+		}
+
+		override fun onFailure(exception: AuthenticationException?) {
+			credMan.clearCredentials()
+			fail()
+		}
+
+
+	}
 }
