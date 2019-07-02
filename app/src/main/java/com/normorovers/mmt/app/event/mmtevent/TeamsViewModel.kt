@@ -7,7 +7,7 @@ import com.normorovers.mmt.app.event.mmtevent.db.Team
 import com.normorovers.mmt.app.event.mmtevent.db.TeamRepository
 
 class TeamsViewModel(application: Application) : AndroidViewModel(application) {
-    val repository = TeamRepository(application)
+    private val repository = TeamRepository(application)
     val allTeams = repository.getAll()
 
     fun insert(team: Team) {
@@ -27,6 +27,7 @@ class TeamsViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getAll(): LiveData<List<Team>> {
+        refreshData()
         return repository.getAll()
     }
 

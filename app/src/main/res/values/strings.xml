@@ -23,4 +23,6 @@
     <string name="placeholder_members">Members:</string>
     <string name="add_ticket">Add Ticket</string>
     <string name="logout">Logout</string>
+    <string name="title_activity_edit">EditTeamActivity</string>
+    <string name="title_activity_edit_team">Edit Team</string>
 </resources>

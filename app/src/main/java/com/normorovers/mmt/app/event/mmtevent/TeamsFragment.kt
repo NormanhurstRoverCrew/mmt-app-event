@@ -1,5 +1,6 @@
 package com.normorovers.mmt.app.event.mmtevent
 
+import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +29,7 @@ class TeamsFragment : Fragment() {
         rv.layoutManager = LinearLayoutManager(this.context)
         rv.hasFixedSize()
 
-        val adapter = TeamAdapter()
+        val adapter = TeamAdapter(this.context!!)
         rv.adapter = adapter
 
         val teamsViewModel: TeamsViewModel = ViewModelProviders.of(this).get(TeamsViewModel::class.java)

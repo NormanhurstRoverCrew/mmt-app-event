@@ -1,6 +1,7 @@
 package com.normorovers.mmt.app.event.mmtevent
 
-import android.util.Log
+import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.normorovers.mmt.app.event.mmtevent.db.Team
 
-class TeamAdapter : ListAdapter<Team, TeamAdapter.TeamHolder>(DiffCallback()) {
+class TeamAdapter(private val context: Context) : ListAdapter<Team, TeamAdapter.TeamHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeamHolder {
         val itemView: View = LayoutInflater.from(parent.context)
@@ -25,13 +26,17 @@ class TeamAdapter : ListAdapter<Team, TeamAdapter.TeamHolder>(DiffCallback()) {
 //        holder.textViewDescription?.text =
 
         holder.root.setOnClickListener {
-            Log.d("hello", currentTeam.uid)
+            val i = Intent(context, EditTeamActivity::class.java)
+            i.putExtra("uid", currentTeam.uid)
+            i.putExtra("name", currentTeam.name)
+            i.putExtra("registration", currentTeam.registration)
+            context.startActivity(i)
         }
     }
 
     class TeamHolder(itemView: View) : ViewHolder(itemView) {
         val root: View = itemView
-        val textViewTitle: TextView? = itemView.findViewById(R.id.name)
+        val textViewTitle: TextView? = itemView.findViewById(R.id.title)
         val textViewRego: TextView? = itemView.findViewById(R.id.registration)
         val textViewDescription: TextView? = itemView.findViewById(R.id.description)
     }

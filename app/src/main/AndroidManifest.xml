@@ -15,6 +15,15 @@
         android:theme="@style/AppTheme"
         tools:targetApi="n">
         <activity
+            android:name=".EditTeamActivity"
+            android:label="@string/title_activity_edit_team"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.normorovers.mmt.app.event.mmtevent.MainActivity" />
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
@@ -35,4 +44,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>
