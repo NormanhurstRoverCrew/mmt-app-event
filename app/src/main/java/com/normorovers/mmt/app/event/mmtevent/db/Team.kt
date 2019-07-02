@@ -7,8 +7,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "teams")
 class Team(
         @PrimaryKey(autoGenerate = false) @ColumnInfo(name = "uid") var uid: String,
-        @ColumnInfo(name = "name") var name: String,
-        @ColumnInfo(name = "registration") var registration: String
+        val id: Int,
+        var name: String,
+        var registration: String
 ) {
     override fun toString(): String {
         return "$uid name: $name, registration: $registration"

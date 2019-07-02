@@ -25,4 +25,7 @@
     <string name="logout">Logout</string>
     <string name="title_activity_edit">EditTeamActivity</string>
     <string name="title_activity_edit_team">Edit Team</string>
+    <string name="placeholder_ticket_name">First Last</string>
+    <string name="placeholder_ticket_mobile">0400 000 000</string>
+    <string name="placeholder_ticket_crew">Nar Nar Goon Rover Crew</string>
 </resources>

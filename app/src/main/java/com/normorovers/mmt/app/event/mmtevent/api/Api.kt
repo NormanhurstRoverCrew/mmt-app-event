@@ -33,7 +33,7 @@ class Api(private val application: Application) {
             val httpClient = httpClientBuilder.build()
 
             val retrofit = Retrofit.Builder()
-                    .baseUrl("http://10.46.36.6:8082/api/")
+                    .baseUrl("http://192.168.0.10:8082/api/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(httpClient)
                     .build()
