@@ -24,8 +24,6 @@ class HomeFragment : Fragment() {
     fun setButtonActions() {
         // Check in teams button opens fragment for checking in teams.
         (checkin_teams as Button).setOnClickListener {
-            activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.fragment_container,
-                    CheckinFragment())?.addToBackStack(null)?.commit()
         }
 
         // List tickets button opens fragment for showing the list of teams.

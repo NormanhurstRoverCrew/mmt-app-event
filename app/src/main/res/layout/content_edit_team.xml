@@ -34,7 +34,6 @@
 
     <fragment
         android:id="@+id/fragment"
-        android:name="com.normorovers.mmt.app.event.mmtevent.TicketsFragment"
         tools:layout="@layout/fragment_tickets"
         android:layout_width="0dp"
         android:layout_height="0dp"

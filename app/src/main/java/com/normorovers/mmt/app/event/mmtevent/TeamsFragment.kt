@@ -22,8 +22,6 @@ class TeamsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        swipe_container.isRefreshing = true
-
         val rv: RecyclerView = recycler_view
 
         rv.layoutManager = LinearLayoutManager(this.context)

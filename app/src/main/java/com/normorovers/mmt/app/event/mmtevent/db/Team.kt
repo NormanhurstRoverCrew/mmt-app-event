@@ -1,14 +1,14 @@
 package com.normorovers.mmt.app.event.mmtevent.db
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity(tableName = "teams")
 class Team(
-        @PrimaryKey(autoGenerate = false) @ColumnInfo(name = "uid") var uid: String,
-        @ColumnInfo(name = "name") var name: String,
-        @ColumnInfo(name = "registration") var registration: String
+        @PrimaryKey(autoGenerate = false) @ColumnInfo(name = "uid") var uid: String = "",
+        @ColumnInfo(name = "id") var id: Int = -1,
+        @ColumnInfo(name = "name") var name: String = "",
+        @ColumnInfo(name = "registration") var registration: String = "",
+        @Ignore var tickets: List<Ticket>? = null
 ) {
     override fun toString(): String {
         return "$uid name: $name, registration: $registration"

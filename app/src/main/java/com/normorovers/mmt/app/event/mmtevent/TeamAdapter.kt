@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.normorovers.mmt.app.event.mmtevent.db.Team
 
-class TeamAdapter(private val context: Context) : ListAdapter<Team, TeamAdapter.TeamHolder>(DiffCallback()) {
+class TeamAdapter(private val context: Context) : ListAdapter<Team, TeamAdapter.TeamHolder>(TeamDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeamHolder {
         val itemView: View = LayoutInflater.from(parent.context)
@@ -28,6 +28,7 @@ class TeamAdapter(private val context: Context) : ListAdapter<Team, TeamAdapter.
         holder.root.setOnClickListener {
             val i = Intent(context, EditTeamActivity::class.java)
             i.putExtra("uid", currentTeam.uid)
+            i.putExtra("id", currentTeam.id)
             i.putExtra("name", currentTeam.name)
             i.putExtra("registration", currentTeam.registration)
             context.startActivity(i)
@@ -42,7 +43,7 @@ class TeamAdapter(private val context: Context) : ListAdapter<Team, TeamAdapter.
     }
 }
 
-class DiffCallback : DiffUtil.ItemCallback<Team>() {
+private class TeamDiffCallback : DiffUtil.ItemCallback<Team>() {
     override fun areItemsTheSame(oldItem: Team, newItem: Team): Boolean {
         return oldItem.uid == newItem.uid
     }

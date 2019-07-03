@@ -22,4 +22,10 @@ interface TicketDao {
 
     @Query("SELECT * FROM tickets ORDER BY uid DESC")
     fun getOnlyAll(): List<Ticket>
+
+    @Query("SELECT * FROM tickets WHERE team_id = :teamId ORDER BY uid DESC")
+    fun getFromTeam(teamId: Long): LiveData<List<Ticket>>
+
+    @Query("SELECT * FROM tickets WHERE team_id = :teamId ORDER BY uid DESC")
+    fun getOnlyFromTeam(teamId: Long): List<Ticket>
 }
