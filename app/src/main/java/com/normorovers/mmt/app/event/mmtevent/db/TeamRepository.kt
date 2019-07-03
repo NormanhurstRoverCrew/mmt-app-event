@@ -94,6 +94,14 @@ class TeamRepository(val application: Application) {
 
 				for (team in teams) {
 					insert(team)
+
+					for (ticket in team.tickets!!) {
+						Log.d("ABCDEFGH", ticket.uid)
+						Log.d("ABCDEFGH", ticket.user.name)
+						Log.d("ABCDEFGH", ticket.user.mobile)
+						Log.d("ABCDEFGH", ticket.user.crew.toString())
+						TicketRepository(application).insert(ticket)
+					}
 				}
 			}
 

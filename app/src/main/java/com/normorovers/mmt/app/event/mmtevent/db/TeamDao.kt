@@ -22,7 +22,4 @@ interface TeamDao {
 
     @Query("SELECT * FROM teams ORDER BY uid DESC")
     fun getOnlyAll(): List<Team>
-
-    @Query("SELECT * FROM teams ORDER BY uid DESC")
-    fun loadTeamsWithTickets(): List<TeamTickets>
 }

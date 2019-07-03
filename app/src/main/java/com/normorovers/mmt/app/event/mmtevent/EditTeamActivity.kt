@@ -1,6 +1,7 @@
 package com.normorovers.mmt.app.event.mmtevent
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,8 +18,12 @@ class EditTeamActivity : AppCompatActivity() {
         (team_name as TextView).text = intent.getStringExtra("name")
         (team_registration as TextView).text = intent.getStringExtra("registration")
 
-        supportFragmentManager.beginTransaction().replace(R.id.fragment,
-                TicketsFragment(intent.getLongExtra("id", -1))).commit()
+        Log.d("EditTeam", intent.getLongExtra("id", -1).toString())
+
+        supportFragmentManager.beginTransaction().replace(
+                R.id.fragment,
+                TicketsFragment(intent.getLongExtra("id", -1))
+        ).commit()
     }
 
 }

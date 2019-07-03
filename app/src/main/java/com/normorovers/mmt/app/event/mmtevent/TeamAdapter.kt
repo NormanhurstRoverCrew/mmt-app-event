@@ -28,7 +28,7 @@ class TeamAdapter(private val context: Context) : ListAdapter<Team, TeamAdapter.
         holder.root.setOnClickListener {
             val i = Intent(context, EditTeamActivity::class.java)
             i.putExtra("uid", currentTeam.uid)
-            i.putExtra("id", currentTeam.id)
+            i.putExtra("id", currentTeam.id as Long)
             i.putExtra("name", currentTeam.name)
             i.putExtra("registration", currentTeam.registration)
             context.startActivity(i)

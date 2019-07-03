@@ -5,7 +5,7 @@ import androidx.room.*
 @Entity(tableName = "teams")
 class Team(
         @PrimaryKey(autoGenerate = false) @ColumnInfo(name = "uid") var uid: String = "",
-        @ColumnInfo(name = "id") var id: Int = -1,
+        @ColumnInfo(name = "id") var id: Long = -1,
         @ColumnInfo(name = "name") var name: String = "",
         @ColumnInfo(name = "registration") var registration: String = "",
         @Ignore var tickets: List<Ticket>? = null

@@ -3,7 +3,7 @@ package com.normorovers.mmt.app.event.mmtevent.db
 class User(
         val name: String,
         val mobile: String,
-        val crew: String
+        val crew: String?
 ) {
 
     override fun toString(): String {

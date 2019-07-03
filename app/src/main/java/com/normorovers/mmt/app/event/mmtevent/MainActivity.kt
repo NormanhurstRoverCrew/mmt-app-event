@@ -67,20 +67,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 		}
 
 		doAsync {
-//			AppDatabase.getInstance(application).ticketDao().insert(Ticket("ebdehadasodibodai", 1, User("Grant Perry", "0439675452", "Norman Nor Goon")))
-			Api(application).retrofit {
-				val teamsD: Teams = it.create(Teams::class.java)
-				val call: Call<List<Team>> = teamsD.getTeams()
-				val teams = call.execute().body()
-				for (team: Team in teams!!.iterator()) {
-					Log.d("Team", "${team.uid} ${team.name}")
-					for (ticket: Ticket in team.tickets!!) {
-						Log.d("Ticket", "${ticket.uid} ${ticket.user.name}")
-						Log.d("Ticket", "${ticket.uid} ${ticket.user.mobile}")
-						Log.d("Ticket", "${ticket.uid} ${ticket.user.crew}")
-					}
-				}
-			}
+//			AppDatabase.getInstance(application).ticketDao().insert(Ticket("ebdehadasodibodai", 1660, User("Grant Perry", "0439675452", "Norman Nor Goon")))
+//			AppDatabase.getInstance(application).ticketDao().insert(Ticket("ebdehadasodib", 1660, User("Keith Perry", "0439234252", "Norman Nor Goon")))
+//			AppDatabase.getInstance(application).ticketDao().insert(Ticket("ebdehadaodai", 1661, User("Grant Perry", "043967654", "abjasbdjh Nor Goon")))
+//			Api(application).retrofit {
+//				val teamsD: Teams = it.create(Teams::class.java)
+//				val call: Call<List<Team>> = teamsD.getTeams()
+//				val teams = call.execute().body()
+//				for (team: Team in teams!!.iterator()) {
+//					Log.d("Team", "${team.uid} ${team.name}")
+//					for (ticket: Ticket in team.tickets!!) {
+//						Log.d("Ticket", "${ticket.uid} ${ticket.user.name}")
+//						Log.d("Ticket", "${ticket.uid} ${ticket.user.mobile}")
+//						Log.d("Ticket", "${ticket.uid} ${ticket.user.crew}")
+//					}
+//				}
+//			}
 		}
 	}
 
@@ -135,7 +137,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 		when (item.itemId) {
 			R.id.nav_tickets -> {
 				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
-						TicketsFragment(intent.getLongExtra("id", -1))).commit()
+				TicketsFragment(null)).commit()
 			}
 			R.id.nav_teams -> {
 				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
