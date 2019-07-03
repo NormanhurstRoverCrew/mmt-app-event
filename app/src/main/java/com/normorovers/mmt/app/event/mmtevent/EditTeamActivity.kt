@@ -2,7 +2,6 @@ package com.normorovers.mmt.app.event.mmtevent
 
 import android.os.Bundle
 import android.widget.TextView
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity;
 
 import kotlinx.android.synthetic.main.activity_edit_team.*
@@ -17,6 +16,9 @@ class EditTeamActivity : AppCompatActivity() {
 
         (team_name as TextView).text = intent.getStringExtra("name")
         (team_registration as TextView).text = intent.getStringExtra("registration")
+
+        supportFragmentManager.beginTransaction().replace(R.id.fragment,
+                TicketsFragment(intent.getLongExtra("id", -1))).commit()
     }
 
 }

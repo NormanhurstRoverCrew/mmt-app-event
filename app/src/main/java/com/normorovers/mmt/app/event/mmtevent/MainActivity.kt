@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -19,8 +20,13 @@ import com.auth0.android.provider.AuthCallback
 import com.auth0.android.provider.WebAuthProvider
 import com.auth0.android.result.Credentials
 import com.google.android.material.navigation.NavigationView
+import com.normorovers.mmt.app.event.mmtevent.api.Api
+import com.normorovers.mmt.app.event.mmtevent.api.Teams
+import com.normorovers.mmt.app.event.mmtevent.db.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
+import org.jetbrains.anko.doAsync
+import retrofit2.Call
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -58,6 +64,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 		nav_view.getHeaderView(0).button_logout.setOnClickListener {
 			logout()
+		}
+
+		doAsync {
+//			AppDatabase.getInstance(application).ticketDao().insert(Ticket("ebdehadasodibodai", 1, User("Grant Perry", "0439675452", "Norman Nor Goon")))
+			Api(application).retrofit {
+				val teamsD: Teams = it.create(Teams::class.java)
+				val call: Call<List<Team>> = teamsD.getTeams()
+				val teams = call.execute().body()
+				for (team: Team in teams!!.iterator()) {
+					Log.d("Team", "${team.uid} ${team.name}")
+					for (ticket: Ticket in team.tickets!!) {
+						Log.d("Ticket", "${ticket.uid} ${ticket.user.name}")
+						Log.d("Ticket", "${ticket.uid} ${ticket.user.mobile}")
+						Log.d("Ticket", "${ticket.uid} ${ticket.user.crew}")
+					}
+				}
+			}
 		}
 	}
 
@@ -110,21 +133,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 	override fun onNavigationItemSelected(item: MenuItem): Boolean {
 		// Handle navigation view item clicks here.
 		when (item.itemId) {
-			R.id.nav_base_log -> {
-				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
-						BaseFragment()).commit()
-			}
-			R.id.nav_base_log_manual -> {
-				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
-						ManualBaseFragment()).commit()
-			}
-			R.id.nav_create_team -> {
-				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
-						CheckinFragment()).commit()
-			}
 			R.id.nav_tickets -> {
 				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
-						TicketsFragment()).commit()
+						TicketsFragment(intent.getLongExtra("id", -1))).commit()
 			}
 			R.id.nav_teams -> {
 				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,

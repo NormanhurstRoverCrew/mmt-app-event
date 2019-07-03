@@ -33,6 +33,10 @@ class TicketRepository(application: Application) {
         return allTickets
     }
 
+    fun getFromTeam(teamId: Long): LiveData<List<Ticket>> {
+        return ticketDao.getFromTeam(teamId)
+    }
+
     fun deleteAll() {
         doAsync {
             ticketDao.deleteAll()
@@ -40,28 +44,6 @@ class TicketRepository(application: Application) {
     }
 
     fun refreshData() {
-        val pullWorker = OneTimeWorkRequestBuilder<PullWorker>()
-                .setConstraints(
-                        Constraints.Builder()
-                                .setRequiredNetworkType(NetworkType.CONNECTED)
-                                .build())
-                .addTag("test")
-                .build()
-
-        WorkManager.getInstance().enqueue(pullWorker)
-    }
-
-    private fun apiPull() {
-
-    }
-
-    class PullWorker(appContext: Context, workerParams: WorkerParameters)
-        : Worker(appContext, workerParams) {
-        override fun doWork(): Result {
-            TicketRepository(applicationContext as Application).apiPull()
-            return Result.success()
-        }
-
     }
 
 }

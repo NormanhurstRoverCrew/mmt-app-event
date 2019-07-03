@@ -19,7 +19,7 @@
             android:layout_marginEnd="4dp"
             android:maxLength="14"
             android:maxLines="1"
-            android:text="@string/placeholder_ticket_mobile"
+            android:text="@string/placeholder_mobile"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <TextView
@@ -32,7 +32,7 @@
             android:layout_toStartOf="@+id/ticket_mobile"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="@string/placeholder_ticket_name"
+            android:text="@string/placeholder_full_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <TextView
@@ -42,7 +42,7 @@
             android:layout_below="@id/ticket_name"
             android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
-            android:text="@string/placeholder_ticket_crew" />
+            android:text="@string/placeholder_crew" />
 
 
     </RelativeLayout>
