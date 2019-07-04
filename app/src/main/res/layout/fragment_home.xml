@@ -10,12 +10,12 @@
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/checkin_teams"
+            android:id="@+id/list_tickets"
             android:layout_width="189dp"
             android:layout_height="162dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="24dp"
-            android:text="@string/menu_checkin"
+            android:text="@string/menu_tickets"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,7 +25,7 @@
             android:layout_height="162dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
-            android:text="@string/menu_tickets"
+            android:text="@string/menu_teams"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
