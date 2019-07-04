@@ -1,4 +1,4 @@
-package com.normorovers.mmt.app.event.mmtevent
+package com.normorovers.mmt.app.event.mmtevent.view.team
 
 import android.content.Context
 import android.content.Intent
@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.normorovers.mmt.app.event.mmtevent.R
 import com.normorovers.mmt.app.event.mmtevent.db.Team
 
 class TeamAdapter(private val context: Context) : ListAdapter<Team, TeamAdapter.TeamHolder>(TeamDiffCallback()) {
@@ -23,12 +24,12 @@ class TeamAdapter(private val context: Context) : ListAdapter<Team, TeamAdapter.
         val currentTeam = getItem(position)
         holder.textViewTitle?.text = currentTeam.name
         holder.textViewRego?.text = currentTeam.registration
-//        holder.textViewDescription?.text =
+        holder.textViewDescription?.text = String.format(context.getString(R.string.team_description, (currentTeam.tickets?.size)))
 
         holder.root.setOnClickListener {
             val i = Intent(context, EditTeamActivity::class.java)
             i.putExtra("uid", currentTeam.uid)
-            i.putExtra("id", currentTeam.id as Long)
+            i.putExtra("id", currentTeam.id)
             i.putExtra("name", currentTeam.name)
             i.putExtra("registration", currentTeam.registration)
             context.startActivity(i)

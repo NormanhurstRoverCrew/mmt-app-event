@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".EditTeamActivity"
+    tools:context=".view.team.EditTeamActivity"
     tools:showIn="@layout/activity_edit_team">
 
     <TextView
@@ -20,7 +20,7 @@
         android:ellipsize="end"
         app:layout_constraintEnd_toStartOf="@+id/team_registration"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="Team Name"
+        android:text="@string/placeholder_teamname"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -31,7 +31,7 @@
         android:layout_marginEnd="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="BRU0HH"
+        android:text="@string/placeholder_registration"
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout

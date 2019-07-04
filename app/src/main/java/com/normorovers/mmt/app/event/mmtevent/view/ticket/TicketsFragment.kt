@@ -1,4 +1,4 @@
-package com.normorovers.mmt.app.event.mmtevent
+package com.normorovers.mmt.app.event.mmtevent.view.ticket
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.normorovers.mmt.app.event.mmtevent.R
 import com.normorovers.mmt.app.event.mmtevent.db.Ticket
+import com.normorovers.mmt.app.event.mmtevent.view.team.TeamViewModel
 import kotlinx.android.synthetic.main.fragment_teams.*
 
 //class TicketsFragment(val teamId: Long?) : Fragment() {
@@ -32,13 +34,21 @@ class TicketsFragment(val teamId: Long?) : Fragment() {
 
 		val ticketsViewModel: TicketsViewModel = ViewModelProviders.of(this).get(TicketsViewModel::class.java)
 
+		// if we don't have a valid Id show all the tickets
 		if (teamId != null && teamId >= 0) {
-			ticketsViewModel.getFromTeam(teamId)
+			// get a factory with the team id
+			val factory: TeamViewModel.Factory = TeamViewModel.Factory(activity!!.application, teamId)
+
+			// get a model from the factory that includes the id
+			val teamViewModel: TeamViewModel = ViewModelProviders.of(this, factory).get(TeamViewModel::class.java)
+
+			teamViewModel.getTickets()
 		} else {
 			swipe_container.isRefreshing = false
 			ticketsViewModel.getAll()
 		}.observe(this, Observer { tickets: List<Ticket> ->
 			adapter.submitList(tickets)
+			swipe_container.isRefreshing = false
 		})
 
 		swipe_container.setOnRefreshListener {

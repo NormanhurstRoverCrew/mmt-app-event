@@ -39,6 +39,17 @@ class TeamRepository(val application: Application) {
 		return allTeams
 	}
 
+	fun get(id: Long): LiveData<Team> {
+		return teamDao.get(id)
+//		val teams: List<Team>? = allTeams.value
+//		val team: List<Team> = teams!!.filter { it.uid == uid }
+//		if (team.any()) {
+//			return team.get(0)
+//		} else {
+//			throw NoTeamException
+//		}
+	}
+
 	fun deleteAll() {
 		doAsync {
 			teamDao.deleteAll()
@@ -47,6 +58,23 @@ class TeamRepository(val application: Application) {
 
 	fun refreshData() {
 		val pullWorker = OneTimeWorkRequestBuilder<PullWorker>()
+				.setConstraints(
+						Constraints.Builder()
+								.setRequiredNetworkType(NetworkType.CONNECTED)
+								.build())
+				.addTag("test")
+				.build()
+
+		WorkManager.getInstance().enqueue(pullWorker)
+	}
+
+	fun refreshTeamData(teamId: Long) {
+		val pullWorker = OneTimeWorkRequestBuilder<PullTeamWorker>()
+				.setInputData(
+						Data.Builder()
+								.putLong("team_id", teamId)
+								.build()
+				)
 				.setConstraints(
 						Constraints.Builder()
 								.setRequiredNetworkType(NetworkType.CONNECTED)
@@ -96,15 +124,86 @@ class TeamRepository(val application: Application) {
 					insert(team)
 
 					for (ticket in team.tickets!!) {
-						Log.d("ABCDEFGH", ticket.uid)
-						Log.d("ABCDEFGH", ticket.user.name)
-						Log.d("ABCDEFGH", ticket.user.mobile)
-						Log.d("ABCDEFGH", ticket.user.crew.toString())
 						TicketRepository(application).insert(ticket)
 					}
 				}
 			}
 
+		}
+	}
+
+	private fun apiPullTeam(teamId: Long) {
+		apiPullTeam(teamId, {})
+	}
+
+
+	private fun apiPullTeam(teamId: Long, unauthorized: () -> Unit) {
+		Api(application).retrofit {
+			val teamsD: Teams = it.create(Teams::class.java)
+			val call: Call<Team> = teamsD.getTeam(teamId, true)
+			doAsync {
+				val response: Response<Team> = call.execute()
+				if (!response.isSuccessful) {
+					when (response.code()) {
+						401 -> {
+							unauthorized()
+						}
+					}
+				}
+
+				val team: Team = response.body()!!
+
+				insert(team)
+
+				val tickets = team.tickets!!
+
+				val original = AppDatabase.getInstance(application).ticketDao().getOnlyFromTeam(teamId)
+
+				val remove: List<Ticket>? = original.filter { old ->
+					val overlap: Ticket? = tickets.find { new ->
+						new.uid == old.uid
+					}
+					overlap == null
+				}
+
+				val ticketRepo = TicketRepository(application)
+
+				if (remove != null) {
+					for (ticket in remove.iterator()) {
+						ticket.teamId = -1
+
+						// instead of deleting the ticket, instead make it teamless. Then update its team
+						ticket.teamId = -1
+						ticketRepo.update(ticket)
+						ticketRepo.refreshTicket(ticket.id)
+					}
+				}
+
+				for (ticket in tickets) {
+					ticketRepo.insert(ticket)
+				}
+			}
+
+		}
+	}
+
+	class PullTeamWorker(appContext: Context, workerParams: WorkerParameters)
+		: Worker(appContext, workerParams) {
+		override fun doWork(): Result {
+			try {
+				val teamRepo = TeamRepository(applicationContext as Application)
+				val teamId: Long? = inputData.getLong("team_id", -1)
+				if (teamId != null) {
+					teamRepo.apiPullTeam(teamId)
+				} else {
+					return Result.failure()
+				}
+			} catch (e: ApiUnauthorized) {
+				Log.d("ApiUnauthorized", "Caught")
+			} catch (e: NoTeamException) {
+				Log.d("NoTeamException", "Caught")
+			}
+			return Result.success()
 		}
 	}
 

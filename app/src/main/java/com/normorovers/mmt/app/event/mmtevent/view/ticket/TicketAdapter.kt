@@ -1,4 +1,4 @@
-package com.normorovers.mmt.app.event.mmtevent
+package com.normorovers.mmt.app.event.mmtevent.view.ticket
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.normorovers.mmt.app.event.mmtevent.R
 import com.normorovers.mmt.app.event.mmtevent.db.Ticket
 
 class TicketAdapter(private val context: Context) : ListAdapter<Ticket, TicketAdapter.TicketHolder>(TicketDiffCallback()) {

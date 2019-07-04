@@ -1,6 +1,5 @@
-package com.normorovers.mmt.app.event.mmtevent
+package com.normorovers.mmt.app.event.mmtevent.view.team
 
-import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.normorovers.mmt.app.event.mmtevent.R
 import com.normorovers.mmt.app.event.mmtevent.db.Team
 import kotlinx.android.synthetic.main.fragment_teams.*
 

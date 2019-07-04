@@ -28,4 +28,6 @@
     <string name="placeholder_mobile">0400 000 000</string>
     <string name="placeholder_full_name">First Last</string>
     <string name="placeholder_crew">Nar Nar Goon RC</string>
+    <string name="placeholder_teamname">Team Name</string>
+    <string name="team_description">%1$d Members</string>
 </resources>

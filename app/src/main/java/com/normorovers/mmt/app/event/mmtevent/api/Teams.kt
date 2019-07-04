@@ -9,12 +9,12 @@ interface Teams {
     fun getTeams(): Call<List<Team>>
 
     @GET("teams/{id}")
-    fun getTeam(@Path("id") id: Int): Call<Team>
+	fun getTeam(@Path("id") id: Long): Call<Team>
 
     @GET("teams/{id}")
     fun getTeam(
-            @Path("id") id: Int,
-            @Query("load_tickets") loadTickets: Boolean
+			@Path("id") id: Long,
+			@Query("load_tickets") loadTickets: Boolean
     ): Call<Team>
 
     @GET("teams/{id}/point_logs")

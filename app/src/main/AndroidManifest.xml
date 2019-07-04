@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         tools:targetApi="n">
         <activity
-            android:name=".EditTeamActivity"
+            android:name=".view.team.EditTeamActivity"
             android:label="@string/title_activity_edit_team"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">

@@ -20,6 +20,12 @@ interface TeamDao {
     @Query("SELECT * FROM teams ORDER BY uid DESC")
     fun getAll(): LiveData<List<Team>>
 
+    @Query("SELECT * FROM teams WHERE teams.uid = :uid")
+    fun get(uid: String): LiveData<Team>
+
+    @Query("SELECT * FROM teams WHERE teams.id = :id")
+    fun get(id: Long): LiveData<Team>
+
     @Query("SELECT * FROM teams ORDER BY uid DESC")
     fun getOnlyAll(): List<Team>
 }

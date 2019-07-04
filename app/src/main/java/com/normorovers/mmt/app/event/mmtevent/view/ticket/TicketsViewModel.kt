@@ -1,10 +1,8 @@
-package com.normorovers.mmt.app.event.mmtevent
+package com.normorovers.mmt.app.event.mmtevent.view.ticket
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import com.normorovers.mmt.app.event.mmtevent.db.Team
-import com.normorovers.mmt.app.event.mmtevent.db.TeamRepository
 import com.normorovers.mmt.app.event.mmtevent.db.Ticket
 import com.normorovers.mmt.app.event.mmtevent.db.TicketRepository
 
