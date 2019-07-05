@@ -28,4 +28,7 @@ interface TicketDao {
 
     @Query("SELECT * FROM tickets WHERE team_id = :teamId ORDER BY uid DESC")
     fun getOnlyFromTeam(teamId: Long): List<Ticket>
+
+    @Query("SELECT * FROM tickets WHERE uid = :ticket_uid")
+    fun getById(ticket_uid: String): Ticket
 }

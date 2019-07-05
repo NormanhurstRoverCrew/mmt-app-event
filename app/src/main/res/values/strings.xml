@@ -30,8 +30,11 @@
     <string name="placeholder_crew">Nar Nar Goon RC</string>
     <string name="placeholder_teamname">Team Name</string>
     <string name="team_description">%1$d Members</string>
+    <string name="empty_team_name">[Team Name]</string>
+    <string name="empty_team_registration">[Team Rego]</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="test_qr">Test QR</string>
+    <string name="scan_team">Scan Team</string>
 </resources>

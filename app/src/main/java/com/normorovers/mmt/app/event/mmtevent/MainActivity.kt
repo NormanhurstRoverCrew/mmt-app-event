@@ -89,10 +89,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 			logout()
 		}
 
-		for (i in firebaseRemoteConfig.all) {
-			Log.d("Val", "${i.key} ${i.value}")
-		}
-
 		doAsync {
 			//			AppDatabase.getInstance(application).ticketDao().insert(Ticket("ebdehadasodibodai", 1660, User("Grant Perry", "0439675452", "Norman Nor Goon")))
 //			AppDatabase.getInstance(application).ticketDao().insert(Ticket("ebdehadasodib", 1660, User("Keith Perry", "0439234252", "Norman Nor Goon")))

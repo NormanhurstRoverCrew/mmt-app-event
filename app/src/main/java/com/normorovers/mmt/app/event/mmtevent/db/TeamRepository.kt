@@ -26,6 +26,13 @@ class TeamRepository(val application: Application) {
 	fun update(team: Team) {
 		doAsync {
 			teamDao.update(team)
+
+			val retrofit = Api(application).retrofit()
+
+
+			val teamsD: Teams = retrofit.create(Teams::class.java)
+			val call: Call<Team> = teamsD.update(team.id, team)
+			call.execute()
 		}
 	}
 
@@ -50,10 +57,25 @@ class TeamRepository(val application: Application) {
 //		}
 	}
 
+	fun getOnly(id: Long): Team {
+		return teamDao.getOnly(id)
+//		val teams: List<Team>? = allTeams.value
+//		val team: List<Team> = teams!!.filter { it.uid == uid }
+//		if (team.any()) {
+//			return team.get(0)
+//		} else {
+//			throw NoTeamException
+//		}
+	}
+
 	fun deleteAll() {
 		doAsync {
 			teamDao.deleteAll()
 		}
+	}
+
+	fun getByUid(team: String): Team {
+		return teamDao.getById(team)
 	}
 
 	fun refreshData() {
@@ -90,43 +112,44 @@ class TeamRepository(val application: Application) {
 	}
 
 	private fun apiPull(unauthorized: () -> Unit) {
-		Api(application).retrofit {
-			val teamsD: Teams = it.create(Teams::class.java)
-			val call: Call<List<Team>> = teamsD.getTeams()
-			doAsync {
-				val response: Response<List<Team>> = call.execute()
-				if (!response.isSuccessful) {
-					when (response.code()) {
-						401 -> {
-							unauthorized()
-						}
+		val retrofit = Api(application).retrofit()
+
+		val teamsD: Teams = retrofit.create(Teams::class.java)
+		val call: Call<List<Team>> = teamsD.getTeams()
+		doAsync {
+			val response: Response<List<Team>> = call.execute()
+			if (!response.isSuccessful) {
+				when (response.code()) {
+					401 -> {
+						unauthorized()
 					}
 				}
+			}
 
-				val teams: List<Team> = response.body()!!
+			val teams: List<Team> = response.body()!!
 
-				val original = teamDao.getOnlyAll()
+			val original = teamDao.getOnlyAll()
 
-				val remove: List<Team>? = original.filter { old ->
-					val overlap: Team? = teams.find { new ->
-						new.uid == old.uid
-					}
-					overlap == null
+			val remove: List<Team>? = original.filter { old ->
+				val overlap: Team? = teams.find { new ->
+					new.uid == old.uid
+				}
+				overlap == null
+			}
+
+			if (remove != null) {
+				for (team in remove.iterator()) {
+					delete(team)
+				}
+			}
+
+			for (team in teams) {
+				insert(team)
+
+				for (ticket in team.tickets!!) {
+					TicketRepository(application).insert(ticket)
 				}
 
-				if (remove != null) {
-					for (team in remove.iterator()) {
-						delete(team)
-					}
-				}
-
-				for (team in teams) {
-					insert(team)
-
-					for (ticket in team.tickets!!) {
-						TicketRepository(application).insert(ticket)
-					}
-				}
 			}
 
 		}
@@ -138,53 +161,57 @@ class TeamRepository(val application: Application) {
 
 
 	private fun apiPullTeam(teamId: Long, unauthorized: () -> Unit) {
-		Api(application).retrofit {
-			val teamsD: Teams = it.create(Teams::class.java)
-			val call: Call<Team> = teamsD.getTeam(teamId, true)
-			doAsync {
-				val response: Response<Team> = call.execute()
-				if (!response.isSuccessful) {
-					when (response.code()) {
-						401 -> {
-							unauthorized()
-						}
+		val retrofit = Api(application).retrofit()
+		val teamsD: Teams = retrofit.create(Teams::class.java)
+		val call: Call<Team> = teamsD.getTeam(teamId, true)
+		doAsync {
+			val response: Response<Team> = call.execute()
+			if (!response.isSuccessful) {
+				when (response.code()) {
+					401 -> {
+						unauthorized()
 					}
-				}
-
-				val team: Team = response.body()!!
-
-				insert(team)
-
-				val tickets = team.tickets!!
-
-				val original = AppDatabase.getInstance(application).ticketDao().getOnlyFromTeam(teamId)
-
-				val remove: List<Ticket>? = original.filter { old ->
-					val overlap: Ticket? = tickets.find { new ->
-						new.uid == old.uid
-					}
-					overlap == null
-				}
-
-				val ticketRepo = TicketRepository(application)
-
-				if (remove != null) {
-					for (ticket in remove.iterator()) {
-						ticket.teamId = -1
-
-						// instead of deleting the ticket, instead make it teamless. Then update its team
-						ticket.teamId = -1
-						ticketRepo.update(ticket)
-						ticketRepo.refreshTicket(ticket.id)
-					}
-				}
-
-				for (ticket in tickets) {
-					ticketRepo.insert(ticket)
 				}
 			}
 
+			if (response.body() == null) {
+				return@doAsync
+			}
+
+			val team: Team = response.body()!!
+
+			insert(team)
+
+			val tickets = team.tickets!!
+
+			val original = AppDatabase.getInstance(application).ticketDao().getOnlyFromTeam(teamId)
+
+			val remove: List<Ticket>? = original.filter { old ->
+				val overlap: Ticket? = tickets.find { new ->
+					new.uid == old.uid
+				}
+				overlap == null
+			}
+
+			val ticketRepo = TicketRepository(application)
+
+			if (remove != null) {
+				for (ticket in remove.iterator()) {
+					ticket.teamId = -1
+
+					// instead of deleting the ticket, instead make it teamless. Then update its team
+					ticket.teamId = -1
+					ticketRepo.update(ticket)
+					ticketRepo.refreshTicket(ticket.id)
+				}
+			}
+
+			for (ticket in tickets) {
+				ticketRepo.insert(ticket)
+			}
 		}
+
+
 	}
 
 	class PullTeamWorker(appContext: Context, workerParams: WorkerParameters)

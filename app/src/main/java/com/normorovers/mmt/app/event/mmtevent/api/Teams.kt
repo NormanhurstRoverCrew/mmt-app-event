@@ -21,5 +21,8 @@ interface Teams {
     fun getPointLogs(@Path("id") id: Int): Call<Team>
 
     @POST("teams/{id}/point_logs")
-    fun postPointLogs(@Body teams: List<Teams>): Call<List<Team>>
+	fun postPointLogs(@Body teams: List<Team>): Call<List<Team>>
+
+	@PUT("teams/{id}")
+	fun update(@Path("id") team_id: Long, @Body team: Team): Call<Team>
 }

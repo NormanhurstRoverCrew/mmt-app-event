@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.normorovers.mmt.app.event.mmtevent.view.team.EditTeamActivity
 import com.normorovers.mmt.app.event.mmtevent.view.team.TeamsFragment
 import com.normorovers.mmt.app.event.mmtevent.view.ticket.TicketsFragment
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -37,8 +38,8 @@ class HomeFragment : Fragment() {
         }
 
         // List tickets button opens fragment for showing the list of teams.
-        (test_qr as Button).setOnClickListener {
-            activity?.startActivityForResult(Intent(context, QRScanOnce::class.java), QRScanOnce.REQUEST_CODE)
+        (scan_team as Button).setOnClickListener {
+            activity?.startActivity(Intent(context, EditTeamActivity::class.java))
         }
     }
 }

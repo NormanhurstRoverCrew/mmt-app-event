@@ -1,7 +1,7 @@
 package com.normorovers.mmt.app.event.mmtevent
 
+import android.media.MediaPlayer
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,21 +14,15 @@ import kotlinx.android.synthetic.main.fragment_qr.*
 private const val SCAN_ONCE = "param1"
 private const val SCAN_DELAY = 1500 // ms till re scan
 
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [QRFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [QRFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
 class QRFragment : Fragment() {
 	private var scan_once: Boolean = true
 
 	private var lastScanTime: Long = 0
 	private var lastScanValue: String = ""
 	private var hasScanned: Boolean = false
+
+	private lateinit var sound_ding_up: MediaPlayer
+	private lateinit var sound_ding_error: MediaPlayer
 
 	private lateinit var qrEader: QREader
 
@@ -37,6 +31,9 @@ class QRFragment : Fragment() {
 		arguments?.let {
 			scan_once = it.getBoolean(SCAN_ONCE, true)
 		}
+
+		sound_ding_up = MediaPlayer.create(activity?.application, R.raw.ding_up)
+		sound_ding_error = MediaPlayer.create(activity?.application, R.raw.ding_error)
 	}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -65,14 +62,14 @@ class QRFragment : Fragment() {
 			if (!hasScanned) {
 				qrEader.stop()
 				hasScanned = true
-				Log.d("ajashdfkjahsdf", data)
-				Log.d("ajashdfkjahsdf", scan_once.toString())
+				sound_ding_up.start()
 				(activity as QRDataReceiver).handleData(data)
 				qrEader.releaseAndCleanup()
 			}
 		} else {
 			val scanTime = System.currentTimeMillis()
 			if (data != lastScanValue || (scanTime - lastScanTime) > SCAN_DELAY) {
+				sound_ding_up.start()
 				(activity as QRDataReceiver).handleData(data)
 				lastScanTime = scanTime
 				lastScanValue = data

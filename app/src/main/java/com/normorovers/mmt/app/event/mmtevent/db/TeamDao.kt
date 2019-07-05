@@ -26,6 +26,15 @@ interface TeamDao {
     @Query("SELECT * FROM teams WHERE teams.id = :id")
     fun get(id: Long): LiveData<Team>
 
+    @Query("SELECT * FROM teams WHERE teams.id = :id")
+    fun getOnly(id: Long): Team
+
     @Query("SELECT * FROM teams ORDER BY uid DESC")
     fun getOnlyAll(): List<Team>
+
+    @Query("SELECT * FROM teams WHERE uid = :team_uid")
+    fun getById(team_uid: String): Team
+
+    @Query("SELECT COUNT(*) FROM tickets WHERE team_id = :team_id")
+    fun countTicketsInTeam(team_id: Long): LiveData<Long>
 }

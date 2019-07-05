@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/private/var/folders/pk/k6glnpw5047_901ksxhpcbjh0000gn/T/AppTranslocation/6B5246E4-2A37-406B-BC2C-F0244E0F36A3/d/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_exit_to_app_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/private/var/folders/pk/k6glnpw5047_901ksxhpcbjh0000gn/T/AppTranslocation/EBB1C1B9-A1CD-4440-B499-D0F400F0CD21/d/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_check_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,11 +28,11 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="height" value="40" />
-                            <entry key="outputName" value="ic_menu_logout" />
+                            <entry key="height" value="36" />
+                            <entry key="outputName" value="ic_check" />
                             <entry key="overrideSize" value="true" />
                             <entry key="sourceFile" value="$PROJECT_DIR$/.." />
-                            <entry key="width" value="40" />
+                            <entry key="width" value="36" />
                           </map>
                         </option>
                       </PersistentState>

@@ -29,6 +29,19 @@ class TicketRepository(private val application: Application) {
 		}
 	}
 
+	fun updateTeamId(ticket: Ticket, teamId: Long) {
+		doAsync {
+			ticket.teamId = teamId
+			ticketDao.update(ticket)
+		}
+		doAsync {
+			val retrofit = Api(application).retrofit()
+			val ticketD: Tickets = retrofit.create(Tickets::class.java)
+			val call: Call<Ticket> = ticketD.setTicketTeam(teamId, ticket)
+			call.execute()
+		}
+	}
+
 	fun delete(ticket: Ticket) {
 		doAsync {
 			ticketDao.delete(ticket)
@@ -47,6 +60,10 @@ class TicketRepository(private val application: Application) {
 		doAsync {
 			ticketDao.deleteAll()
 		}
+	}
+
+	fun getByUid(ticket: String): Ticket {
+		return ticketDao.getById(ticket)
 	}
 
 	fun refreshData() {
@@ -83,23 +100,22 @@ class TicketRepository(private val application: Application) {
 	}
 
 	private fun apiPullTicket(ticketId: Long, unauthorized: () -> Unit) {
-		Api(application).retrofit {
-			val ticketD: Tickets = it.create(Tickets::class.java)
-			val call: Call<Ticket> = ticketD.getTicket(ticketId)
-			doAsync {
-				val response: Response<Ticket> = call.execute()
-				if (!response.isSuccessful) {
-					when (response.code()) {
-						401 -> {
-							unauthorized()
-						}
+		val retrofit = Api(application).retrofit()
+		val ticketD: Tickets = retrofit.create(Tickets::class.java)
+		val call: Call<Ticket> = ticketD.getTicket(ticketId)
+		doAsync {
+			val response: Response<Ticket> = call.execute()
+			if (!response.isSuccessful) {
+				when (response.code()) {
+					401 -> {
+						unauthorized()
 					}
 				}
-
-				val ticket: Ticket = response.body()!!
-
-				insert(ticket)
 			}
+
+			val ticket: Ticket = response.body()!!
+
+			insert(ticket)
 		}
 	}
 
@@ -108,39 +124,38 @@ class TicketRepository(private val application: Application) {
 	}
 
 	private fun apiPull(unauthorized: () -> Unit) {
-		Api(application).retrofit {
-			val ticketD: Tickets = it.create(Tickets::class.java)
-			val call: Call<List<Ticket>> = ticketD.all()
-			doAsync {
-				val response: Response<List<Ticket>> = call.execute()
-				if (!response.isSuccessful) {
-					when (response.code()) {
-						401 -> {
-							unauthorized()
-						}
+		val retrofit = Api(application).retrofit()
+		val ticketD: Tickets = retrofit.create(Tickets::class.java)
+		val call: Call<List<Ticket>> = ticketD.all()
+		doAsync {
+			val response: Response<List<Ticket>> = call.execute()
+			if (!response.isSuccessful) {
+				when (response.code()) {
+					401 -> {
+						unauthorized()
 					}
 				}
+			}
 
-				val tickets: List<Ticket> = response.body()!!
+			val tickets: List<Ticket> = response.body()!!
 
-				val original = ticketDao.getOnlyAll()
+			val original = ticketDao.getOnlyAll()
 
-				val remove: List<Ticket>? = original.filter { old ->
-					val overlap: Ticket? = tickets.find { new ->
-						new.uid == old.uid
-					}
-					overlap == null
+			val remove: List<Ticket>? = original.filter { old ->
+				val overlap: Ticket? = tickets.find { new ->
+					new.uid == old.uid
 				}
+				overlap == null
+			}
 
-				if (remove != null) {
-					for (ticket in remove.iterator()) {
-						delete(ticket)
-					}
+			if (remove != null) {
+				for (ticket in remove.iterator()) {
+					delete(ticket)
 				}
+			}
 
-				for (ticket: Ticket in tickets) {
-					insert(ticket)
-				}
+			for (ticket: Ticket in tickets) {
+				insert(ticket)
 			}
 		}
 	}

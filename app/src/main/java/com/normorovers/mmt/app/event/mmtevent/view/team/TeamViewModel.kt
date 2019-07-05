@@ -9,27 +9,36 @@ import com.normorovers.mmt.app.event.mmtevent.db.Team
 import com.normorovers.mmt.app.event.mmtevent.db.TeamRepository
 import com.normorovers.mmt.app.event.mmtevent.db.Ticket
 import com.normorovers.mmt.app.event.mmtevent.db.TicketRepository
+import org.jetbrains.anko.doAsync
 
 
-class TeamViewModel(application: Application, val id: Long) : AndroidViewModel(application) {
+class TeamViewModel(application: Application, val teamId: Long) : AndroidViewModel(application) {
 	private val repository = TeamRepository(application)
-	private var ticketRepository = TicketRepository(application).getFromTeam(id)
+	private var ticketRepository = TicketRepository(application)
+	private var tickets = ticketRepository.getFromTeam(teamId)
 
 	fun update(team: Team) {
 		repository.update(team)
 	}
 
 	fun get(): LiveData<Team> {
-		refreshTeamData(id)
-		return repository.get(id)
+		refreshTeamData(teamId)
+		return repository.get(teamId)
 	}
 
 	fun getTickets(): LiveData<List<Ticket>> {
-		return ticketRepository
+		return tickets
 	}
 
 	fun refreshTeamData(id: Long) {
 		repository.refreshTeamData(id)
+	}
+
+	fun addTicketbyUid(ticket: String) {
+		doAsync {
+			val t = ticketRepository.getByUid(ticket)
+			ticketRepository.updateTeamId(t, teamId)
+		}
 	}
 
 	/**
