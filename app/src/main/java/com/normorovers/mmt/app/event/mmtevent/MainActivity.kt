@@ -1,13 +1,19 @@
 package com.normorovers.mmt.app.event.mmtevent
 
+import android.Manifest
 import android.app.Application
 import android.app.Dialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.auth0.android.Auth0
@@ -19,6 +25,7 @@ import com.auth0.android.provider.AuthCallback
 import com.auth0.android.provider.WebAuthProvider
 import com.auth0.android.result.Credentials
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.normorovers.mmt.app.event.mmtevent.view.team.TeamsFragment
 import com.normorovers.mmt.app.event.mmtevent.view.ticket.TicketsFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -27,12 +34,29 @@ import org.jetbrains.anko.doAsync
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+	private val CAMERA_REQUEST_CODE: Int = 9042
 	private lateinit var credentialsManager: SecureCredentialsManager
-
+	private val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
+
+		firebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults)
+
+		firebaseRemoteConfig.fetch(0)
+				.addOnCompleteListener { task ->
+					if (task.isSuccessful) {
+						firebaseRemoteConfig.activate()
+						Toast.makeText(this, "Config Refreshed", Toast.LENGTH_SHORT).show()
+					} else {
+						Toast.makeText(this, "Not Refreshed", Toast.LENGTH_SHORT).show()
+					}
+				}
+				.addOnSuccessListener {
+					firebaseRemoteConfig.activate()
+				}
+				.addOnFailureListener { Log.d("FirebaseRemoteConfig", "FAILED") }
 
 		val account = Auth0(this)
 		val authentication = AuthenticationAPIClient(account)
@@ -45,6 +69,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 					.withScope("openid profile email offline_access")
 					.withAudience("https://admin.mmt.normorovers.com/")
 					.start(this, authCallback(credentialsManager) { logout() })
+		} else {
+			setupPermissions()
 		}
 
 
@@ -63,8 +89,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 			logout()
 		}
 
+		for (i in firebaseRemoteConfig.all) {
+			Log.d("Val", "${i.key} ${i.value}")
+		}
+
 		doAsync {
-//			AppDatabase.getInstance(application).ticketDao().insert(Ticket("ebdehadasodibodai", 1660, User("Grant Perry", "0439675452", "Norman Nor Goon")))
+			//			AppDatabase.getInstance(application).ticketDao().insert(Ticket("ebdehadasodibodai", 1660, User("Grant Perry", "0439675452", "Norman Nor Goon")))
 //			AppDatabase.getInstance(application).ticketDao().insert(Ticket("ebdehadasodib", 1660, User("Keith Perry", "0439234252", "Norman Nor Goon")))
 //			AppDatabase.getInstance(application).ticketDao().insert(Ticket("ebdehadaodai", 1661, User("Grant Perry", "043967654", "abjasbdjh Nor Goon")))
 //			Api(application).retrofit {
@@ -85,6 +115,41 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 	fun logout() {
 		logout(application)
+	}
+
+	private fun setupPermissions() {
+		val permission = ContextCompat.checkSelfPermission(this,
+				Manifest.permission.CAMERA)
+
+		if (permission != PackageManager.PERMISSION_GRANTED) {
+			Log.i("MainActivity", "Permission to use camera denied")
+			makeRequest()
+		}
+	}
+
+	private fun makeRequest() {
+		ActivityCompat.requestPermissions(this,
+				arrayOf(Manifest.permission.CAMERA),
+				CAMERA_REQUEST_CODE)
+	}
+
+	private fun refreshFirebaseConfig() {
+
+	}
+
+	override fun onRequestPermissionsResult(requestCode: Int,
+											permissions: Array<String>, grantResults: IntArray) {
+		when (requestCode) {
+			CAMERA_REQUEST_CODE -> {
+
+				if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+
+					Log.i("MainActivity", "Permission has been denied by user")
+				} else {
+					Log.i("MainActivity", "Permission has been granted by user")
+				}
+			}
+		}
 	}
 
 	companion object {
@@ -160,7 +225,42 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 			credMan.clearCredentials()
 			fail()
 		}
+	}
 
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+		when (requestCode) {
+			QRScanOnce.REQUEST_CODE -> {
+				when (resultCode) {
+					RESULT_OK -> {
+						val scannedData = data?.getStringExtra("data")!!
+						Log.d("MainActivity", scannedData)
 
+						try {
+							Log.d("REG", TicketCode().parse(scannedData))
+						} catch (e: CodeHeaderWrong) {
+
+						} catch (e: CodeBodyInvalid) {
+
+						}
+					}
+				}
+			}
+			QRMultiScan.REQUEST_CODE -> {
+				when (resultCode) {
+					RESULT_OK -> {
+						val scannedData = data?.getStringExtra("data")!!
+						Log.d("MainActivity", scannedData)
+
+						try {
+							Log.d("REG", TicketCode().parse(scannedData))
+						} catch (e: CodeHeaderWrong) {
+
+						} catch (e: CodeBodyInvalid) {
+
+						}
+					}
+				}
+			}
+		}
 	}
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><!-- START xml_defaults -->
+<defaultsMap>
+    <entry>
+        <key>api_url</key>
+        <value>https://event.mmt.normorovers.com</value>
+    </entry>
+</defaultsMap><!-- END xml_defaults -->

@@ -1,6 +1,7 @@
 package com.normorovers.mmt.app.event.mmtevent.api
 
 import android.app.Application
+import android.util.Log
 import com.auth0.android.Auth0
 import com.auth0.android.authentication.AuthenticationAPIClient
 import com.auth0.android.authentication.storage.CredentialsManagerException
@@ -8,12 +9,16 @@ import com.auth0.android.authentication.storage.SecureCredentialsManager
 import com.auth0.android.authentication.storage.SharedPreferencesStorage
 import com.auth0.android.callback.BaseCallback
 import com.auth0.android.result.Credentials
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 class Api(private val application: Application) {
+    private val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+    private var baseUrl = firebaseRemoteConfig.getString("api_url")
+
     fun retrofit(authenticatedFunction: (Retrofit) -> Unit) {
         authenticate { accessToken ->
 
@@ -33,10 +38,12 @@ class Api(private val application: Application) {
             val httpClient = httpClientBuilder.build()
 
             val retrofit = Retrofit.Builder()
-					.baseUrl("http://192.168.0.10:8082/api/")
+                    .baseUrl("$baseUrl/api/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(httpClient)
                     .build()
+
+            Log.d("BaseUrl", retrofit.baseUrl().toString())
 
             authenticatedFunction(retrofit)
         }

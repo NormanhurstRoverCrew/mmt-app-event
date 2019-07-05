@@ -1,5 +1,6 @@
 package com.normorovers.mmt.app.event.mmtevent
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +34,11 @@ class HomeFragment : Fragment() {
         (list_teams as Button).setOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.fragment_container,
 					TeamsFragment())?.addToBackStack(null)?.commit()
+        }
+
+        // List tickets button opens fragment for showing the list of teams.
+        (test_qr as Button).setOnClickListener {
+            activity?.startActivityForResult(Intent(context, QRScanOnce::class.java), QRScanOnce.REQUEST_CODE)
         }
     }
 }
