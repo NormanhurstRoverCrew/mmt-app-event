@@ -8,30 +8,6 @@
     tools:context=".view.team.EditTeamActivity"
     tools:showIn="@layout/activity_edit_team">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/button_add_ticket"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_ticket" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/button_add_ticket_from_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintBottom_toTopOf="@+id/button_add_ticket"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_list" />
-
     <TextView
         android:id="@+id/team_name"
         android:layout_width="0dp"

@@ -9,9 +9,13 @@ import com.auth0.android.authentication.storage.SharedPreferencesStorage
 import com.auth0.android.callback.BaseCallback
 import com.auth0.android.result.Credentials
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.gson.*
 import okhttp3.OkHttpClient
+import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
 class Api(private var application: Application) {
@@ -24,6 +28,24 @@ class Api(private var application: Application) {
 		authenticate {
 			this.accessToken = it
 		}
+	}
+
+	class RetrofitDateSerializer : JsonSerializer<OffsetDateTime> {
+		private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+		override fun serialize(srcDate: OffsetDateTime?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement? {
+			if (srcDate == null)
+				return null
+
+			val formatted = srcDate.format(formatter)
+			return JsonPrimitive(formatted)
+		}
+	}
+
+	private fun buildGsonConverterFactory(): GsonConverterFactory {
+		val gsonBuilder = GsonBuilder()
+		// Custom DATE Converter for Retrofit
+		gsonBuilder.registerTypeAdapter(OffsetDateTime::class.java, RetrofitDateSerializer())
+		return GsonConverterFactory.create(gsonBuilder.create())
 	}
 
 	fun retrofit(): Retrofit {
@@ -42,13 +64,11 @@ class Api(private var application: Application) {
 
 		val httpClient = httpClientBuilder.build()
 
-		val retrofit = Retrofit.Builder()
+		return Retrofit.Builder()
 				.baseUrl("$baseUrl/api/")
-				.addConverterFactory(GsonConverterFactory.create())
+				.addConverterFactory(buildGsonConverterFactory())
 				.client(httpClient)
 				.build()
-
-		return retrofit
 	}
 
 	private fun authenticate(authenticated: (accessToken: String) -> Unit) {

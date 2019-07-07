@@ -16,6 +16,15 @@
         android:theme="@style/AppTheme"
         tools:targetApi="n">
         <activity
+            android:name=".view.team.TeamActivity"
+            android:label="@string/title_activity_team"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.normorovers.mmt.app.event.mmtevent.MainActivity" />
+        </activity>
+        <activity
             android:name=".view.ticket.TicketActivity"
             android:label="@string/title_activity_ticket"
             android:parentActivityName=".view.team.EditTeamActivity"
