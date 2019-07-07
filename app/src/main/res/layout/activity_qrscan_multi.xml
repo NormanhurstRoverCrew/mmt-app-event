@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".QRScanOnce">
+    tools:context=".qr.QRScanOnce">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_confirm_selection"
@@ -32,4 +32,14 @@
         tools:layout="@layout/fragment_qr">
 
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/text_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_confirm_selection"
+        app:layout_constraintEnd_toEndOf="@+id/fragment"
+        app:layout_constraintStart_toStartOf="@+id/fragment" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

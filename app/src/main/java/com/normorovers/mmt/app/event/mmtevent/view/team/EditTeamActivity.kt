@@ -16,9 +16,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.normorovers.mmt.app.event.mmtevent.*
+import com.normorovers.mmt.app.event.mmtevent.R
 import com.normorovers.mmt.app.event.mmtevent.db.Team
 import com.normorovers.mmt.app.event.mmtevent.db.TeamRepository
+import com.normorovers.mmt.app.event.mmtevent.qr.QRScanMulti
+import com.normorovers.mmt.app.event.mmtevent.qr.QRScanOnce
+import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeBodyInvalid
+import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeHeaderWrong
+import com.normorovers.mmt.app.event.mmtevent.qr.code.TeamCode
+import com.normorovers.mmt.app.event.mmtevent.qr.code.TicketCode
+import com.normorovers.mmt.app.event.mmtevent.view.ticket.TicketSelectorActivity
 import com.normorovers.mmt.app.event.mmtevent.view.ticket.TicketsFragment
 import kotlinx.android.synthetic.main.activity_edit_team.*
 import kotlinx.android.synthetic.main.content_edit_team.*
@@ -40,8 +47,6 @@ class EditTeamActivity : AppCompatActivity() {
 
 		if (teamId == -1L) {
 			// start the single scanner activity to get a team
-
-			Log.d("Edit Team", "Will open scanner to get team")
 
 			startActivityForResult(Intent(this, QRScanOnce::class.java), QRScanOnce.REQUEST_CODE)
 
@@ -85,7 +90,11 @@ class EditTeamActivity : AppCompatActivity() {
 		).commit()
 
 		(button_add_ticket as FloatingActionButton).setOnClickListener {
-			startActivityForResult(Intent(application, QRMultiScan::class.java), QRMultiScan.REQUEST_CODE)
+			startActivityForResult(Intent(application, QRScanMulti::class.java), QRScanMulti.REQUEST_CODE)
+		}
+
+		(button_add_ticket_from_list as FloatingActionButton).setOnClickListener {
+			startActivityForResult(Intent(application, TicketSelectorActivity::class.java), TicketSelectorActivity.REQUEST_CODE)
 		}
 	}
 
@@ -182,7 +191,7 @@ class EditTeamActivity : AppCompatActivity() {
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		when (requestCode) {
-			QRMultiScan.REQUEST_CODE -> { //For adding tickets to our team
+			QRScanMulti.REQUEST_CODE -> { //For adding tickets to our team
 				when (resultCode) {
 					RESULT_OK -> {
 						val scannedData = data?.getStringArrayListExtra("data")!!
@@ -222,6 +231,19 @@ class EditTeamActivity : AppCompatActivity() {
 
 						} catch (e: CodeBodyInvalid) {
 
+						}
+					}
+					RESULT_CANCELED -> {
+						finish()
+					}
+				}
+			}
+			TicketSelectorActivity.REQUEST_CODE -> { //For adding a ticket to the team using a list
+				when (resultCode) {
+					RESULT_OK -> {
+						val uid = data?.getStringExtra("uid")!!
+						doAsync {
+							TeamViewModel(application, teamId).addTicketbyUid(uid)
 						}
 					}
 				}

@@ -29,27 +29,41 @@ class TicketsFragment(val teamId: Long?) : Fragment() {
 		rv.layoutManager = LinearLayoutManager(this.context)
 		rv.hasFixedSize()
 
-		val adapter = TicketAdapter(this.context!!)
-		rv.adapter = adapter
-
 		val ticketsViewModel: TicketsViewModel = ViewModelProviders.of(this).get(TicketsViewModel::class.java)
 
-		// if we don't have a valid Id show all the tickets
-		if (teamId != null && teamId >= 0) {
-			// get a factory with the team id
-			val factory: TeamViewModel.Factory = TeamViewModel.Factory(activity!!.application, teamId)
+		if (activity is TicketSelectorActivity) {
+			// Activity for selecting a ticket and returning it
+			val adapter = TicketSelectAdapter(this.context!!)
+			rv.adapter = adapter
 
-			// get a model from the factory that includes the id
-			val teamViewModel: TeamViewModel = ViewModelProviders.of(this, factory).get(TeamViewModel::class.java)
-
-			teamViewModel.getTickets()
+			swipe_container.isRefreshing = false
+			ticketsViewModel.getAll().observe(this, Observer { tickets: List<Ticket> ->
+				adapter.submitList(tickets)
+				swipe_container.isRefreshing = false
+			})
 		} else {
-			swipe_container.isRefreshing = false
-			ticketsViewModel.getAll()
-		}.observe(this, Observer { tickets: List<Ticket> ->
-			adapter.submitList(tickets)
-			swipe_container.isRefreshing = false
-		})
+			// Normal ticket fragment
+			val adapter = TicketAdapter(this.context!!)
+			rv.adapter = adapter
+
+
+			// if we don't have a valid Id show all the tickets
+			if (teamId != null && teamId >= 0) {
+				// get a factory with the team id
+				val factory: TeamViewModel.Factory = TeamViewModel.Factory(activity!!.application, teamId)
+
+				// get a model from the factory that includes the id
+				val teamViewModel: TeamViewModel = ViewModelProviders.of(this, factory).get(TeamViewModel::class.java)
+
+				teamViewModel.getTickets()
+			} else {
+				swipe_container.isRefreshing = false
+				ticketsViewModel.getAll()
+			}.observe(this, Observer { tickets: List<Ticket> ->
+				adapter.submitList(tickets)
+				swipe_container.isRefreshing = false
+			})
+		}
 
 		swipe_container.setOnRefreshListener {
 			ticketsViewModel.refreshData()

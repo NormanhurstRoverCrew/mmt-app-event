@@ -1,8 +1,9 @@
-package com.normorovers.mmt.app.event.mmtevent
+package com.normorovers.mmt.app.event.mmtevent.qr
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.normorovers.mmt.app.event.mmtevent.R
 
 
 class QRScanOnce : AppCompatActivity(), QRDataReceiver {

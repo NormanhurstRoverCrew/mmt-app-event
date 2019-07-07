@@ -1,6 +1,7 @@
 package com.normorovers.mmt.app.event.mmtevent.view.ticket
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,12 @@ class TicketAdapter(private val context: Context) : ListAdapter<Ticket, TicketAd
         holder.name?.text = currentTicket.user.name
         holder.mobile?.text = currentTicket.user.mobile
         holder.crew?.text = currentTicket.user.crew
+
+        holder.root.setOnClickListener {
+            val i = Intent(context, TicketActivity::class.java)
+            i.putExtra("uid", currentTicket.uid)
+            context.startActivity(i)
+        }
     }
 
     class TicketHolder(itemView: View) : ViewHolder(itemView) {

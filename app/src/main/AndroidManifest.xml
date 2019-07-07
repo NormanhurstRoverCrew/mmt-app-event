@@ -15,8 +15,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="n">
-        <activity android:name=".QRScanOnce" />
-        <activity android:name=".QRMultiScan" />
+        <activity
+            android:name=".view.ticket.TicketActivity"
+            android:label="@string/title_activity_ticket"
+            android:parentActivityName=".view.team.EditTeamActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.normorovers.mmt.app.event.mmtevent.view.team.EditTeamActivity" />
+        </activity>
+        <activity
+            android:name=".view.ticket.TicketSelectorActivity"
+            android:label="@string/title_activity_ticket_selector"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".qr.QRScanOnce" />
+        <activity android:name=".qr.QRScanMulti" />
         <activity
             android:name=".view.team.EditTeamActivity"
             android:label="@string/title_activity_edit_team"

@@ -4,25 +4,13 @@
     tools:showIn="navigation_view">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_create_team"
+            android:id="@+id/nav_checkin"
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_checkin" />
         <item
-            android:id="@+id/nav_tickets"
+            android:id="@+id/nav_base"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/menu_tickets" />
-        <item
-            android:id="@+id/nav_base_log"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_base_log" />
-        <item
-            android:id="@+id/nav_base_log_manual"
-            android:icon="@drawable/ic_menu_send"
-            android:title="@string/menu_base_log_manuel" />
-        <item
-            android:id="@+id/nav_teams"
-            android:icon="@drawable/ic_format_list_bulleted_black_24dp"
-            android:title="@string/menu_teams" />
     </group>
 
 </menu>

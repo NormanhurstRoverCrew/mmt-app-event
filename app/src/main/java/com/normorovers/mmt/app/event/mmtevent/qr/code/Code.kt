@@ -1,4 +1,4 @@
-package com.normorovers.mmt.app.event.mmtevent
+package com.normorovers.mmt.app.event.mmtevent.qr.code
 
 abstract class Code(type: String) {
 	private val primary: String = "MMT19".toUpperCase()

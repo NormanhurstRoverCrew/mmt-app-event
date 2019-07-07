@@ -7,10 +7,14 @@ import androidx.lifecycle.LiveData
 import androidx.work.*
 import com.normorovers.mmt.app.event.mmtevent.api.Api
 import com.normorovers.mmt.app.event.mmtevent.api.ApiUnauthorized
+import com.normorovers.mmt.app.event.mmtevent.api.Payment
 import com.normorovers.mmt.app.event.mmtevent.api.Tickets
+import com.normorovers.mmt.app.event.mmtevent.view.ticket.PaymentResult
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.doAsyncResult
 import retrofit2.Call
 import retrofit2.Response
+import java.util.concurrent.Future
 
 class TicketRepository(private val application: Application) {
 	val database = AppDatabase.getInstance(application)
@@ -64,6 +68,32 @@ class TicketRepository(private val application: Application) {
 
 	fun getByUid(ticket: String): Ticket {
 		return ticketDao.getById(ticket)
+	}
+
+
+	fun getByUidObservable(uid: String): LiveData<Ticket> {
+		return ticketDao.getByIdLive(uid)
+	}
+
+	fun getPaid(uid: String, unauthorized: () -> Unit): Future<Boolean> {
+		val retrofit = Api(application).retrofit()
+		val paymentD = retrofit.create(Payment::class.java)
+		val call: Call<PaymentResult> = paymentD.hasTicketPaid(uid)
+
+		return doAsyncResult {
+			val response: Response<PaymentResult> = call.execute()
+			if (!response.isSuccessful) {
+				when (response.code()) {
+					401 -> {
+						unauthorized()
+					}
+				}
+			}
+
+			val pr: PaymentResult = response.body()!!
+
+			return@doAsyncResult pr.paid
+		}
 	}
 
 	fun refreshData() {

@@ -31,4 +31,7 @@ interface TicketDao {
 
     @Query("SELECT * FROM tickets WHERE uid = :ticket_uid")
     fun getById(ticket_uid: String): Ticket
+
+    @Query("SELECT * FROM tickets WHERE uid = :ticket_uid")
+    fun getByIdLive(ticket_uid: String): LiveData<Ticket>
 }

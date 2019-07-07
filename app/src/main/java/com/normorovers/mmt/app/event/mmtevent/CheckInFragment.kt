@@ -9,13 +9,14 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.normorovers.mmt.app.event.mmtevent.view.team.EditTeamActivity
 import com.normorovers.mmt.app.event.mmtevent.view.team.TeamsFragment
+import com.normorovers.mmt.app.event.mmtevent.view.ticket.TicketActivity
 import com.normorovers.mmt.app.event.mmtevent.view.ticket.TicketsFragment
-import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_check_in.*
 
-class HomeFragment : Fragment() {
+class CheckInFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        return inflater.inflate(R.layout.fragment_check_in, container, false)
 
     }
 
@@ -40,6 +41,10 @@ class HomeFragment : Fragment() {
         // List tickets button opens fragment for showing the list of teams.
         (scan_team as Button).setOnClickListener {
             activity?.startActivity(Intent(context, EditTeamActivity::class.java))
+        }
+
+        (scan_ticket as Button).setOnClickListener {
+            activity?.startActivity(Intent(context, TicketActivity::class.java))
         }
     }
 }

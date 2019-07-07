@@ -26,8 +26,12 @@ import com.auth0.android.provider.WebAuthProvider
 import com.auth0.android.result.Credentials
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.normorovers.mmt.app.event.mmtevent.qr.QRScanMulti
+import com.normorovers.mmt.app.event.mmtevent.qr.QRScanOnce
+import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeBodyInvalid
+import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeHeaderWrong
+import com.normorovers.mmt.app.event.mmtevent.qr.code.TicketCode
 import com.normorovers.mmt.app.event.mmtevent.view.team.TeamsFragment
-import com.normorovers.mmt.app.event.mmtevent.view.ticket.TicketsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import org.jetbrains.anko.doAsync
@@ -83,7 +87,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 		nav_view.setNavigationItemSelectedListener(this)
 
-		supportFragmentManager.beginTransaction().replace(R.id.fragment_container, HomeFragment()).commit()
+		supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CheckInFragment()).commit()
 
 		nav_view.getHeaderView(0).button_logout.setOnClickListener {
 			logout()
@@ -193,11 +197,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 	override fun onNavigationItemSelected(item: MenuItem): Boolean {
 		// Handle navigation view item clicks here.
 		when (item.itemId) {
-			R.id.nav_tickets -> {
+			R.id.nav_checkin -> {
 				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
-						TicketsFragment(null)).commit()
+						CheckInFragment()).commit()
 			}
-			R.id.nav_teams -> {
+			R.id.nav_base -> {
 				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
 						TeamsFragment()).commit()
 			}
@@ -241,7 +245,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 					}
 				}
 			}
-			QRMultiScan.REQUEST_CODE -> {
+			QRScanMulti.REQUEST_CODE -> {
 				when (resultCode) {
 					RESULT_OK -> {
 						val scannedData = data?.getStringExtra("data")!!
