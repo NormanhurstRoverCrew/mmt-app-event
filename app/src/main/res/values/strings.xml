@@ -3,7 +3,7 @@
     <string name="com_auth0_domain">normorovers.au.auth0.com</string>
 
     <string name="app_name">MMT Event</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">MMT Event</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Magical Mystery Tour</string>
@@ -45,4 +45,5 @@
     <string name="payment_paid">Paid</string>
     <string name="payment_unpaid">UNPAID</string>
     <string name="title_activity_team">TeamActivity</string>
+    <string name="title_activity_base_team_log">BaseTeamLogActivity</string>
 </resources>

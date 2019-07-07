@@ -16,7 +16,7 @@ import com.normorovers.mmt.app.event.mmtevent.db.AppDatabase
 import com.normorovers.mmt.app.event.mmtevent.db.Team
 import org.jetbrains.anko.doAsyncResult
 
-class TeamAdapter(private val context: Context) : ListAdapter<Team, TeamAdapter.TeamHolder>(TeamDiffCallback()) {
+class TeamsListEditAdapter(private val context: Context) : ListAdapter<Team, TeamsListEditAdapter.TeamHolder>(TeamDiffCallback()) {
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeamHolder {
 		val itemView: View = LayoutInflater.from(parent.context)
@@ -26,13 +26,13 @@ class TeamAdapter(private val context: Context) : ListAdapter<Team, TeamAdapter.
 
 	override fun onBindViewHolder(holder: TeamHolder, position: Int) {
 		val currentTeam = getItem(position)
-		holder.textViewTitle?.text = if (currentTeam.name.length > 0) {
+		holder.textViewTitle?.text = if (currentTeam.name.isNotEmpty()) {
 			currentTeam.name
 		} else {
 			"[Name: EMPTY]"
 		}
 
-		holder.textViewRego?.text = if (currentTeam.registration.length > 0) {
+		holder.textViewRego?.text = if (currentTeam.registration.isNotEmpty()) {
 			currentTeam.registration
 		} else {
 			"[Rego: EMPTY]"
@@ -66,14 +66,15 @@ class TeamAdapter(private val context: Context) : ListAdapter<Team, TeamAdapter.
 		val textViewRego: TextView? = itemView.findViewById(R.id.registration)
 		val textViewDescription: TextView? = itemView.findViewById(R.id.description)
 	}
+
+	private class TeamDiffCallback : DiffUtil.ItemCallback<Team>() {
+		override fun areItemsTheSame(oldItem: Team, newItem: Team): Boolean {
+			return oldItem.uid == newItem.uid
+		}
+
+		override fun areContentsTheSame(oldItem: Team, newItem: Team): Boolean {
+			return oldItem.equals(newItem)
+		}
+	}
 }
 
-private class TeamDiffCallback : DiffUtil.ItemCallback<Team>() {
-	override fun areItemsTheSame(oldItem: Team, newItem: Team): Boolean {
-		return oldItem.uid == newItem.uid
-	}
-
-	override fun areContentsTheSame(oldItem: Team, newItem: Team): Boolean {
-		return oldItem.equals(newItem)
-	}
-}

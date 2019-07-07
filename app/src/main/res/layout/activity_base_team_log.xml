@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.team.TeamActivity">
+    tools:context=".view.base.BaseTeamLogActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -20,6 +20,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_team" />
+    <include layout="@layout/content_base_team_log" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

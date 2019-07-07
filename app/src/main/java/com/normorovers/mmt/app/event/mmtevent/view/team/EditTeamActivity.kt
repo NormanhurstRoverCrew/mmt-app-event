@@ -28,7 +28,7 @@ import com.normorovers.mmt.app.event.mmtevent.qr.code.TicketCode
 import com.normorovers.mmt.app.event.mmtevent.view.ticket.TicketSelectorActivity
 import com.normorovers.mmt.app.event.mmtevent.view.ticket.TicketsFragment
 import kotlinx.android.synthetic.main.activity_edit_team.*
-import kotlinx.android.synthetic.main.content_edit_team.*
+import kotlinx.android.synthetic.main.fragment_team.*
 import org.jetbrains.anko.doAsync
 
 
@@ -62,7 +62,7 @@ class EditTeamActivity : AppCompatActivity() {
 		val teamViewModel: TeamViewModel = ViewModelProviders.of(this, factory).get(TeamViewModel::class.java)
 		teamViewModel.get()
 				.observe(this, Observer { team: Team ->
-					val tn = (team_name as TextView)
+					val tn = (text_team_name as TextView)
 					if (team.name.isNotEmpty()) {
 						tn.text = team.name
 						tn.setTextColor(Color.BLACK)
@@ -71,7 +71,7 @@ class EditTeamActivity : AppCompatActivity() {
 						tn.setTextColor(Color.RED)
 					}
 
-					val tr = (team_registration as TextView)
+					val tr = (text_team_rego as TextView)
 					if (team.registration.isNotEmpty()) {
 						tr.text = team.registration
 						tr.setTextColor(Color.BLACK)
@@ -80,8 +80,8 @@ class EditTeamActivity : AppCompatActivity() {
 						tr.setTextColor(Color.RED)
 					}
 
-					(team_name as TextView).setOnClickListener { editTeamNameDialogue(team.name) }
-					(team_registration as TextView).setOnClickListener { editTeamRegoDialogue(team.registration) }
+					(text_team_name as TextView).setOnClickListener { editTeamNameDialogue(team.name) }
+					(text_team_rego as TextView).setOnClickListener { editTeamRegoDialogue(team.registration) }
 				})
 
 		supportFragmentManager.beginTransaction().replace(

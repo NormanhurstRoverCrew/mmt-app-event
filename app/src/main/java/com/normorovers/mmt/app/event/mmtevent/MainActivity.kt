@@ -26,21 +26,13 @@ import com.auth0.android.provider.WebAuthProvider
 import com.auth0.android.result.Credentials
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.gson.Gson
-import com.normorovers.mmt.app.event.mmtevent.api.ActivityLogs
-import com.normorovers.mmt.app.event.mmtevent.api.Api
-import com.normorovers.mmt.app.event.mmtevent.db.ActivityLog
 import com.normorovers.mmt.app.event.mmtevent.qr.QRScanMulti
 import com.normorovers.mmt.app.event.mmtevent.qr.QRScanOnce
 import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeBodyInvalid
 import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeHeaderWrong
 import com.normorovers.mmt.app.event.mmtevent.qr.code.TicketCode
-import com.normorovers.mmt.app.event.mmtevent.view.team.TeamsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
-import okhttp3.ResponseBody
-import org.jetbrains.anko.doAsync
-import retrofit2.Call
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -99,26 +91,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 			logout()
 		}
 
-		doAsync {
-			val retrofit = Api(application).retrofit()
-			val activityLogsD: ActivityLogs = retrofit.create(ActivityLogs::class.java)
-
-			val list: ArrayList<ActivityLog> = ArrayList()
-			var ac = ActivityLog.new(1, 1660)
-			ac.comment = "Some comment"
-			list.add(ac)
-			ac = ActivityLog.new(1, 1660)
-			ac.comment = "Some other comment"
-			list.add(ac)
-
-			Gson().toJson(list)
-
-			val call: Call<ResponseBody> = activityLogsD.sendLogs(list)
-			val resp = call.execute().body()
-
-			Log.d("respo", Gson().toJson(list) + resp.toString())
-
-		}
+//		doAsync {
+//			val retrofit = Api(application).retrofit()
+//			val activityLogsD: ActivityLogs = retrofit.create(ActivityLogs::class.java)
+//
+//			val list: ArrayList<ActivityLog> = ArrayList()
+//			var ac = ActivityLog.new(1, 1660)
+//			ac.comment = "Some comment"
+//			list.add(ac)
+//			ac = ActivityLog.new(1, 1660)
+//			ac.comment = "Some other comment"
+//			list.add(ac)
+//
+//			Gson().toJson(list)
+//
+//			val call: Call<ResponseBody> = activityLogsD.sendLogs(list)
+//			val resp = call.execute().body()
+//
+//			Log.d("respo", Gson().toJson(list) + resp.toString())
+//
+//		}
 	}
 
 	fun logout() {
@@ -211,7 +203,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 			}
 			R.id.nav_base -> {
 				supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
-						TeamsFragment()).commit()
+						BaseFragment()).commit()
 			}
 		}
 		val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)

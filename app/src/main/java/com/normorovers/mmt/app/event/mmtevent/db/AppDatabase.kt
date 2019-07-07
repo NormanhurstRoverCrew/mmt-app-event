@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [Team::class, Ticket::class, ActivityLog::class], exportSchema = false, version = 3)
+@Database(entities = [Team::class, Ticket::class, ActivityLog::class], exportSchema = false, version = 4)
 @TypeConverters(Converter::class)
 abstract class AppDatabase : RoomDatabase() {
     companion object : SingletonHolder<AppDatabase, Context>({

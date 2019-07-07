@@ -9,7 +9,6 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.normorovers.mmt.app.event.mmtevent.view.team.EditTeamActivity
 import com.normorovers.mmt.app.event.mmtevent.view.team.TeamsFragment
-import com.normorovers.mmt.app.event.mmtevent.view.ticket.TicketsFragment
 import kotlinx.android.synthetic.main.fragment_check_in.*
 
 class BaseFragment : Fragment() {
@@ -25,16 +24,10 @@ class BaseFragment : Fragment() {
 	}
 
 	fun setButtonActions() {
-		// Check in teams button opens fragment for checking in teams.
-		(list_tickets as Button).setOnClickListener {
-			activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.fragment_container,
-					TicketsFragment(null))?.addToBackStack(null)?.commit()
-		}
-
 		// List tickets button opens fragment for showing the list of teams.
 		(list_teams as Button).setOnClickListener {
 			activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.fragment_container,
-					TeamsFragment())?.addToBackStack(null)?.commit()
+					TeamsFragment.newInstance(TeamsFragment.Type.TeamActivityLog))?.addToBackStack(null)?.commit()
 		}
 
 		// List tickets button opens fragment for showing the list of teams.
