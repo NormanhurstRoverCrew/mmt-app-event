@@ -3,7 +3,9 @@ package com.normorovers.mmt.app.event.mmtevent
 import android.Manifest
 import android.app.Application
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -26,6 +28,8 @@ import com.auth0.android.provider.WebAuthProvider
 import com.auth0.android.result.Credentials
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.normorovers.mmt.app.event.mmtevent.api.Api
+import com.normorovers.mmt.app.event.mmtevent.db.AppDatabase
 import com.normorovers.mmt.app.event.mmtevent.qr.QRScanMulti
 import com.normorovers.mmt.app.event.mmtevent.qr.QRScanOnce
 import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeBodyInvalid
@@ -33,6 +37,7 @@ import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeHeaderWrong
 import com.normorovers.mmt.app.event.mmtevent.qr.code.TicketCode
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -40,9 +45,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 	private lateinit var credentialsManager: SecureCredentialsManager
 	private val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
 
+	private lateinit var preferences: SharedPreferences
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
+
+		preferences = getSharedPreferences(application.getString(R.string.shared_preferences), Context.MODE_PRIVATE)
 
 		firebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults)
 
@@ -70,11 +79,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 			WebAuthProvider.login(account)
 					.withScope("openid profile email offline_access")
 					.withAudience("https://admin.mmt.normorovers.com/")
-					.start(this, authCallback(credentialsManager) { logout() })
+					.start(this, authCallback(application, credentialsManager) { logout() })
 		} else {
 			setupPermissions()
 		}
-
 
 		setSupportActionBar(toolbar)
 
@@ -85,32 +93,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 		nav_view.setNavigationItemSelectedListener(this)
 
-		supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CheckInFragment()).commit()
+		supportFragmentManager.beginTransaction().replace(R.id.fragment_container, BaseFragment()).commit()
 
 		nav_view.getHeaderView(0).button_logout.setOnClickListener {
 			logout()
 		}
 
-//		doAsync {
-//			val retrofit = Api(application).retrofit()
-//			val activityLogsD: ActivityLogs = retrofit.create(ActivityLogs::class.java)
-//
-//			val list: ArrayList<ActivityLog> = ArrayList()
-//			var ac = ActivityLog.new(1, 1660)
-//			ac.comment = "Some comment"
-//			list.add(ac)
-//			ac = ActivityLog.new(1, 1660)
-//			ac.comment = "Some other comment"
-//			list.add(ac)
-//
-//			Gson().toJson(list)
-//
-//			val call: Call<ResponseBody> = activityLogsD.sendLogs(list)
-//			val resp = call.execute().body()
-//
-//			Log.d("respo", Gson().toJson(list) + resp.toString())
-//
-//		}
+		val authId = if (credentialsManager.hasValidCredentials()) {
+			Api(application).getUser().get(5, TimeUnit.SECONDS).id ?: null
+		} else null
+
+		preferences.edit().apply {
+			putInt("base_id", 1)
+			if (!authId.isNullOrEmpty()) {
+				putString("auth_id", authId)
+			}
+			commit()
+		}
+
+		AppDatabase.getInstance(application).activityLogDao().getAll().observeForever {
+			for (log in it) {
+				if (!log.synced) {
+					Log.d("Log", "${log.id} base:${log.base} arrived:${log.arrived} departed:${log.departed} logged_at:${log.loggedAt.toLocalDateTime()} points:${log.points} trivia:${log.trivia} clues:${log.clues} comment:${log.comment}")
+				}
+			}
+		}
 	}
 
 	fun logout() {
@@ -162,12 +169,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 			//DO NOT CLEAN DATABASES TIME SERIES DB... We might want something from them
 
+			restartMainActivity(application)
+		}
+
+		fun restartMainActivity(application: Application) {
 			val i = Intent(application, MainActivity::class.java)
 			i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
 			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 			application.startActivity(i)
 		}
 	}
+
 
 	override fun onBackPressed() {
 		val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
@@ -211,9 +223,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 		return true
 	}
 
-	private class authCallback(val credMan: SecureCredentialsManager, val fail: () -> Unit) : AuthCallback {
+	private class authCallback(
+			private val application: Application,
+			private val credMan: SecureCredentialsManager,
+			private val fail: () -> Unit) : AuthCallback {
 		override fun onSuccess(credentials: Credentials) {
 			credMan.saveCredentials(credentials)
+			restartMainActivity(application)
 		}
 
 		override fun onFailure(dialog: Dialog) {

@@ -22,4 +22,7 @@ interface ActivityLogDao {
 
 	@Query("SELECT * FROM activity_logs")
 	fun getOnlyAll(): List<ActivityLog>
+
+	@Query("SELECT * FROM activity_logs WHERE synced = 0")
+	fun getUnsnced(): List<ActivityLog>
 }

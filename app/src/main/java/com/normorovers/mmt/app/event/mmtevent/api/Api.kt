@@ -7,16 +7,21 @@ import com.auth0.android.authentication.storage.CredentialsManagerException
 import com.auth0.android.authentication.storage.SecureCredentialsManager
 import com.auth0.android.authentication.storage.SharedPreferencesStorage
 import com.auth0.android.callback.BaseCallback
+import com.auth0.android.management.UsersAPIClient
 import com.auth0.android.result.Credentials
+import com.auth0.android.result.UserProfile
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.*
 import okhttp3.OkHttpClient
+import org.jetbrains.anko.doAsyncResult
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Type
+import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
+
 
 class Api(private var application: Application) {
 	private val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
@@ -80,6 +85,7 @@ class Api(private var application: Application) {
 		credentialsManager.getCredentials(object : BaseCallback<Credentials, CredentialsManagerException> {
 			override fun onSuccess(credentials: Credentials) {
 				val accToken = credentials.accessToken!!
+
 				authenticated(accToken)
 			}
 
@@ -87,6 +93,15 @@ class Api(private var application: Application) {
 				throw ApiUnauthorized
 			}
 		})
+	}
+
+	fun getUser(): Future<UserProfile> {
+		val account = Auth0(application)
+		val usersClient = UsersAPIClient(account, accessToken)
+		val authentication = AuthenticationAPIClient(account)
+		return doAsyncResult {
+			return@doAsyncResult authentication.userInfo(accessToken).execute()
+		}
 	}
 
 	private fun bearer(accessToken: String): String {
