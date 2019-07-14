@@ -1,10 +1,10 @@
 package com.normorovers.mmt.app.event.mmtevent.view.base
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -52,12 +52,11 @@ class BaseTeamLogActivity : AppCompatActivity() {
 			return@doAsyncResult TeamRepository(application).getByUid(uid!!)
 		}
 
+
 		preferences = application.getSharedPreferences(application.getString(R.string.shared_preferences), Context.MODE_PRIVATE)
 
 		val baseId: Int = preferences.getInt("base_id", -1)
 		if (baseId == -1) throw Error("A base must be selected")
-
-		val onlyPresentView: ConstraintLayout = constraint_show_present
 
 		val team = teamDb.get()
 
@@ -67,31 +66,33 @@ class BaseTeamLogActivity : AppCompatActivity() {
 			rego = it.registration
 		}
 
+		viewModel = BaseTeamLogViewModel(application, teamId!!, baseId)
+
+		teamPresent = viewModel.isAtBase()
+
 		supportFragmentManager?.beginTransaction()?.replace(R.id.fragment_team,
 				TeamFragment.newInstance(uid!!, name!!, rego!!))?.commit()
 
-		viewModel = BaseTeamLogViewModel(application, teamId!!)
+		viewModel = BaseTeamLogViewModel(application, teamId!!, baseId)
 
 
 		if (teamId == -1L) throw Error("A Team must be selected/loaded")
 
 		(text_base_number as TextView).text = "$baseId"
 
+		updateDisplayPresent(teamPresent)
 
-		onlyPresentView.visibility = if (teamPresent) View.VISIBLE else View.INVISIBLE
+		(switch_team_present as Switch).isChecked = teamPresent
 
-		(switch_team_present as Switch).setOnCheckedChangeListener { button, isChecked ->
+		(switch_team_present as Switch).setOnCheckedChangeListener { _, isChecked ->
 			if (isChecked != teamPresent) {
 				teamPresent = isChecked
+				updateDisplayPresent(isChecked)
 				if (isChecked) {
 					//team has arrived at the base...
-					Log.d("Log", "Team arrived")
-					onlyPresentView.visibility = View.VISIBLE
 					viewModel.insertArrived()
 				} else {
 					//team has left the base...
-					Log.d("Log", "Team departing")
-					onlyPresentView.visibility = View.INVISIBLE
 					viewModel.insertDepart()
 				}
 			}
@@ -112,6 +113,17 @@ class BaseTeamLogActivity : AppCompatActivity() {
 		(button_make_comment as Button).setOnClickListener {
 			makeCommentDialog()
 		}
+
+		(button_view_logs as Button).setOnClickListener {
+			val i = Intent(this, ActivityLogActivity::class.java)
+			i.putExtra("team", team.id)
+			i.putExtra("base", baseId)
+			startActivity(i)
+		}
+	}
+
+	private fun updateDisplayPresent(p: Boolean) {
+		(constraint_show_present as ConstraintLayout).visibility = if (p) View.VISIBLE else View.INVISIBLE
 	}
 
 	private fun addPointsDialog() {
@@ -181,7 +193,7 @@ class BaseTeamLogActivity : AppCompatActivity() {
 		builder.setTitle("Opened the clues?")
 
 		val input = CheckBox(this)
-		input.text = "Clues Opened"
+		input.text = getString(R.string.clues_opened)
 		input.isChecked = true
 		builder.setView(input)
 

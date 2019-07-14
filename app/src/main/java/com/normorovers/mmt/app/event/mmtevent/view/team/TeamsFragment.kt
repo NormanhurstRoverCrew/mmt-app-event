@@ -1,9 +1,8 @@
 package com.normorovers.mmt.app.event.mmtevent.view.team
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -13,22 +12,31 @@ import androidx.recyclerview.widget.RecyclerView
 import com.normorovers.mmt.app.event.mmtevent.R
 import com.normorovers.mmt.app.event.mmtevent.db.Team
 import kotlinx.android.synthetic.main.fragment_teams.*
+import org.jetbrains.anko.doAsync
+import java.util.concurrent.Future
 
 private const val ARG_TYPE = "type"
 
 class TeamsFragment : Fragment() {
-
     private var type: Type? = null
+
+	private lateinit var fullListTeams: List<Team>
+	private lateinit var adapter: ListAdapter<Team, out RecyclerView.ViewHolder>
 
     enum class Type(val value: Int) {
         TeamEdit(1),
         TeamActivityLog(2);
 
         companion object {
-            private val map = Type.values().associateBy(Type::value)
+			private val map = values().associateBy(Type::value)
             fun fromInt(type: Int) = map[type]
         }
     }
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		setHasOptionsMenu(true)
+	}
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_teams, container, false)
@@ -46,7 +54,7 @@ class TeamsFragment : Fragment() {
         rv.layoutManager = LinearLayoutManager(this.context)
         rv.hasFixedSize()
 
-        val adapter: ListAdapter<Team, out RecyclerView.ViewHolder> = when (type!!) {
+		adapter = when (type!!) {
             Type.TeamEdit -> TeamsListEditAdapter(this.context!!)
             Type.TeamActivityLog -> TeamsListActivityLogAdapter(this.context!!)
         }
@@ -55,14 +63,48 @@ class TeamsFragment : Fragment() {
 
         val teamsViewModel: TeamsViewModel = ViewModelProviders.of(this).get(TeamsViewModel::class.java)
         teamsViewModel.getAll().observe(this, Observer { teams: List<Team> ->
-            adapter.submitList(teams)
-            swipe_container.isRefreshing = false
+			fullListTeams = teams
+			adapter.submitList(teams)
+			swipe_container.isRefreshing = false
         })
 
         swipe_container.setOnRefreshListener {
             teamsViewModel.refreshData()
         }
     }
+
+	private fun search(query: String?): Future<Unit> = doAsync {
+		val wanted = if (!query.isNullOrEmpty()) {
+			val validQuery = query.toLowerCase()
+			fullListTeams.filter {
+				it.name.toLowerCase().contains(validQuery) or it.registration.toLowerCase().contains(validQuery)
+			}.toList()
+		} else {
+			fullListTeams
+		}
+		adapter.submitList(wanted)
+	}
+
+	override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+		inflater!!.inflate(R.menu.search_menu, menu)
+
+		val searchItem: MenuItem = menu!!.findItem(R.id.action_search)
+		val searchView: SearchView = searchItem.actionView as SearchView
+
+		searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+			override fun onQueryTextSubmit(query: String?): Boolean {
+				search(query)
+				return false
+			}
+
+			override fun onQueryTextChange(query: String?): Boolean {
+				search(query)
+				return false
+			}
+		})
+
+		super.onCreateOptionsMenu(menu, inflater)
+	}
 
     companion object {
         /**

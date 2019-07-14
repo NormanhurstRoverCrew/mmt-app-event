@@ -5,16 +5,18 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.normorovers.mmt.app.event.mmtevent.db.ActivityLog
 import com.normorovers.mmt.app.event.mmtevent.db.ActivityLogRepository
+import com.normorovers.mmt.app.event.mmtevent.db.TeamRepository
 
-class BaseTeamLogViewModel(private val app: Application, private val teamId: Long) : AndroidViewModel(app) {
-	private val repository = ActivityLogRepository(app)
+class BaseTeamLogViewModel(private val app: Application, private val teamId: Long, private val baseId: Int) : AndroidViewModel(app) {
+	private val activityR = ActivityLogRepository(app)
+	private val teamR = TeamRepository(app)
 
 	private fun newLog(): ActivityLog {
 		return ActivityLog.new(app, teamId)
 	}
 
 	fun insert(activityLog: ActivityLog) {
-		repository.insert(activityLog)
+		activityR.insert(activityLog)
 	}
 
 	fun insertArrived() {
@@ -54,6 +56,18 @@ class BaseTeamLogViewModel(private val app: Application, private val teamId: Lon
 	}
 
 	fun getAll(): LiveData<List<ActivityLog>> {
-		return repository.getAll()
+		return activityR.getAll()
+	}
+
+	fun totalPoints(): Float {
+		return activityR.totalPoints(teamId, baseId)
+	}
+
+	fun comments(): List<String> {
+		return activityR.comments(teamId, baseId)
+	}
+
+	fun isAtBase(): Boolean {
+		return activityR.isAtBase(teamId, baseId)
 	}
 }

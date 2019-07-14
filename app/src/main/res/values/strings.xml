@@ -47,4 +47,13 @@
     <string name="title_activity_team">TeamActivity</string>
     <string name="title_activity_base_team_log">BaseTeamLogActivity</string>
     <string name="shared_preferences">com.normorovers.mmt.app.event.mmt.SHARED_PREFERENCES_KEY</string>
+    <string name="view_logs">View Logs</string>
+    <string name="search">Search</string>
+    <string name="team_at_base">Team At Base?</string>
+    <string name="give_points">Give Points</string>
+    <string name="give_trivia_points">Give Trivia Points</string>
+    <string name="make_comment">Make a nasty comment</string>
+    <string name="mark_clues">Mark Clues Opened!</string>
+    <string name="logs">Logs</string>
+    <string name="clues_opened">Clues Opened</string>
 </resources>

@@ -28,7 +28,7 @@ android {
 
 dependencies {
     def lifecycle_version = "2.0.0"
-    def work_version = "2.0.1"
+    def work_version = "2.1.0"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -40,8 +40,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     implementation 'com.google.firebase:firebase-config:18.0.0'
-    implementation 'com.google.firebase:firebase-core:17.0.0'
-    implementation 'com.google.firebase:firebase-ml-vision:21.0.0'
+    implementation 'com.google.firebase:firebase-core:17.0.1'
+    implementation 'com.google.firebase:firebase-ml-vision:22.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
@@ -57,7 +59,7 @@ dependencies {
     kapt "androidx.appcompat:appcompat:1.1.0-rc01"
     kapt "androidx.appcompat:appcompat-resources:1.1.0-rc01"
     kapt "androidx.cardview:cardview:1.0.0"
-    kapt "com.google.android.material:material:1.1.0-alpha07"
+    kapt "com.google.android.material:material:1.1.0-alpha08"
     implementation "org.jetbrains.anko:anko-commons:0.10.4"
     implementation 'androidx.room:room-runtime:2.1.0'
     annotationProcessor 'androidx.room:room-compiler:2.1.0'
