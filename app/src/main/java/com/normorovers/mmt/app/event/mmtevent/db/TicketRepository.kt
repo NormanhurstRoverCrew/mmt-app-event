@@ -75,7 +75,7 @@ class TicketRepository(private val application: Application) {
 		return ticketDao.getByIdLive(uid)
 	}
 
-	fun getPaid(uid: String, unauthorized: () -> Unit): Future<Boolean> {
+	fun getPaid(uid: String, unauthorized: () -> Unit): Future<PaymentResult> {
 		val retrofit = Api(application).retrofit()
 		val paymentD = retrofit.create(Payment::class.java)
 		val call: Call<PaymentResult> = paymentD.hasTicketPaid(uid)
@@ -92,7 +92,7 @@ class TicketRepository(private val application: Application) {
 
 			val pr: PaymentResult = response.body()!!
 
-			return@doAsyncResult pr.paid
+			return@doAsyncResult pr
 		}
 	}
 
@@ -105,7 +105,7 @@ class TicketRepository(private val application: Application) {
 				.addTag("test")
 				.build()
 
-		WorkManager.getInstance().enqueue(pullWorker)
+		WorkManager.getInstance(application).enqueue(pullWorker)
 	}
 
 	fun refreshTicket(id: Long) {
@@ -122,7 +122,7 @@ class TicketRepository(private val application: Application) {
 				.addTag("test")
 				.build()
 
-		WorkManager.getInstance().enqueue(pullWorker)
+		WorkManager.getInstance(application).enqueue(pullWorker)
 	}
 
 	private fun apiPullTicket(ticketId: Long) {

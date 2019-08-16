@@ -87,7 +87,7 @@ class TeamRepository(val application: Application) {
 				.addTag("test")
 				.build()
 
-		WorkManager.getInstance().enqueue(pullWorker)
+		WorkManager.getInstance(application).enqueue(pullWorker)
 	}
 
 	fun refreshTeamData(teamId: Long) {
@@ -104,7 +104,7 @@ class TeamRepository(val application: Application) {
 				.addTag("test")
 				.build()
 
-		WorkManager.getInstance().enqueue(pullWorker)
+		WorkManager.getInstance(application).enqueue(pullWorker)
 	}
 
 	private fun apiPull() {

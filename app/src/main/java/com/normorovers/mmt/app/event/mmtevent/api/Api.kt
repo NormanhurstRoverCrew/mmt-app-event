@@ -97,7 +97,7 @@ class Api(private var application: Application) {
 
 	fun getUser(): Future<UserProfile> {
 		val account = Auth0(application)
-		val usersClient = UsersAPIClient(account, accessToken)
+//		val usersClient = UsersAPIClient(account, accessToken)
 		val authentication = AuthenticationAPIClient(account)
 		return doAsyncResult {
 			return@doAsyncResult authentication.userInfo(accessToken).execute()

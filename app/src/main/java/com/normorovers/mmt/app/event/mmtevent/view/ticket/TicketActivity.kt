@@ -51,11 +51,12 @@ class TicketActivity : AppCompatActivity() {
 		})
 
 		val ps = (payment_status as TextView)
-		if (paid.get()) {
+		val payment_result = paid.get();
+		if (payment_result.paid) {
 			ps.text = getString(R.string.payment_paid)
 			ps.setTextColor(Color.GREEN)
 		} else {
-			ps.text = getString(R.string.payment_unpaid)
+			ps.text = getString(R.string.payment_unpaid, payment_result.due)
 			ps.setTextColor(Color.RED)
 			MediaPlayer.create(application, R.raw.ding_error).start()
 		}
