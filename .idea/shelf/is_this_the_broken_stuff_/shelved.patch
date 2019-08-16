@@ -1,0 +1,128 @@
+Index: app/src/main/java/com/normorovers/mmt/app/event/mmtevent/db/Converter.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/normorovers/mmt/app/event/mmtevent/db/Converter.kt	(date 1562487233000)
++++ app/src/main/java/com/normorovers/mmt/app/event/mmtevent/db/Converter.kt	(date 1562487233000)
+@@ -0,0 +1,25 @@
++package com.normorovers.mmt.app.event.mmtevent.db
++
++import androidx.room.TypeConverter
++import org.threeten.bp.OffsetDateTime
++import org.threeten.bp.format.DateTimeFormatter
++
++object Converter {
++	private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
++	@TypeConverter
++	@JvmStatic
++	fun toOffsetDateTime(value: String?): OffsetDateTime? {
++		return value?.let {
++
++			return formatter.parse(value, OffsetDateTime::from)
++
++		}
++
++	}
++
++	@TypeConverter
++	@JvmStatic
++	fun fromOffsetDateTime(date: OffsetDateTime?): String? {
++		return date?.format(formatter)
++	}
++}
+\ No newline at end of file
+Index: app/src/main/java/com/normorovers/mmt/app/event/mmtevent/db/Log.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/normorovers/mmt/app/event/mmtevent/db/Log.kt	(date 1562487233000)
++++ app/src/main/java/com/normorovers/mmt/app/event/mmtevent/db/Log.kt	(date 1562487233000)
+@@ -0,0 +1,26 @@
++package com.normorovers.mmt.app.event.mmtevent.db
++
++import androidx.room.ColumnInfo
++import androidx.room.Embedded
++import androidx.room.Entity
++import androidx.room.PrimaryKey
++import com.google.gson.annotations.SerializedName
++import org.threeten.bp.OffsetDateTime
++
++@Entity(tableName = "logs")
++class Log(
++		@PrimaryKey val id: Long,
++		val team: Long,
++		val base: Int,
++		@ColumnInfo(name = "logged_at") @SerializedName("logged_at") val loggedAt: OffsetDateTime,
++		val admin: String,
++		val arrived: Boolean?,
++		val departed: Boolean?,
++		val points: Float?,
++		val trivia: Float?,
++		val clues: Boolean?,
++		val comment: String?
++) {
++
++
++}
+\ No newline at end of file
+Index: app/src/main/java/com/normorovers/mmt/app/event/mmtevent/db/LogDao.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/normorovers/mmt/app/event/mmtevent/db/LogDao.kt	(date 1562486404000)
++++ app/src/main/java/com/normorovers/mmt/app/event/mmtevent/db/LogDao.kt	(date 1562486404000)
+@@ -0,0 +1,22 @@
++package com.normorovers.mmt.app.event.mmtevent.db
++
++import androidx.lifecycle.LiveData
++import androidx.room.*
++
++@Dao
++interface LogDao {
++    @Insert(onConflict = OnConflictStrategy.REPLACE)
++    fun insert(log: Log)
++
++    @Update
++    fun update(log: Long)
++
++    @Delete
++    fun delete(log: Log)
++
++    @Query("DELETE FROM logs")
++    fun deleteAll()
++
++    @Query("SELECT * FROM logs ORDER BY id DESC")
++    fun getAll(): LiveData<List<Log>>
++}
+\ No newline at end of file
+Index: app/src/main/java/com/normorovers/mmt/app/event/mmtevent/db/AppDatabase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.normorovers.mmt.app.event.mmtevent.db\n\nimport android.content.Context\nimport androidx.room.Database\nimport androidx.room.Room\nimport androidx.room.RoomDatabase\n\n@Database(entities = arrayOf(Team::class, Ticket::class), exportSchema = false, version = 1)\nabstract class AppDatabase : RoomDatabase() {\n    companion object : SingletonHolder<AppDatabase, Context>({\n        Room.databaseBuilder(it, AppDatabase::class.java, \"mmt19_develpment.db\")\n                .fallbackToDestructiveMigration()\n                .build()\n    })\n\n    abstract fun teamDao(): TeamDao\n    abstract fun ticketDao(): TicketDao\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/normorovers/mmt/app/event/mmtevent/db/AppDatabase.kt	(date 1562479802000)
++++ app/src/main/java/com/normorovers/mmt/app/event/mmtevent/db/AppDatabase.kt	(date 1562486715000)
+@@ -4,8 +4,10 @@
+ import androidx.room.Database
+ import androidx.room.Room
+ import androidx.room.RoomDatabase
++import androidx.room.TypeConverters
+ 
+-@Database(entities = arrayOf(Team::class, Ticket::class), exportSchema = false, version = 1)
++@Database(entities = arrayOf(Team::class, Ticket::class, Log::class), exportSchema = false, version = 2)
++@TypeConverters(Converter::class)
+ abstract class AppDatabase : RoomDatabase() {
+     companion object : SingletonHolder<AppDatabase, Context>({
+         Room.databaseBuilder(it, AppDatabase::class.java, "mmt19_develpment.db")
+@@ -15,4 +17,5 @@
+ 
+     abstract fun teamDao(): TeamDao
+     abstract fun ticketDao(): TicketDao
++    abstract fun logDao(): LogDao
+ }
+\ No newline at end of file

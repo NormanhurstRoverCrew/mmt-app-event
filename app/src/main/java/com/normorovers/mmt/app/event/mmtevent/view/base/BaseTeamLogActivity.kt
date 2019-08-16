@@ -70,8 +70,8 @@ class BaseTeamLogActivity : AppCompatActivity() {
 
 		teamPresent = viewModel.isAtBase()
 
-		supportFragmentManager?.beginTransaction()?.replace(R.id.fragment_team,
-				TeamFragment.newInstance(uid!!, name!!, rego!!))?.commit()
+		supportFragmentManager.beginTransaction().replace(R.id.fragment_team,
+				TeamFragment.newInstance(uid!!, name!!, rego!!)).commit()
 
 		viewModel = BaseTeamLogViewModel(application, teamId!!, baseId)
 

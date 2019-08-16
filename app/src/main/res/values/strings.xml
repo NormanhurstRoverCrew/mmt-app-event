@@ -56,4 +56,5 @@
     <string name="mark_clues">Mark Clues Opened!</string>
     <string name="logs">Logs</string>
     <string name="clues_opened">Clues Opened</string>
+    <string name="base_manager">Base Manager</string>
 </resources>

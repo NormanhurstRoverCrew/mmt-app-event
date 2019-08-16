@@ -8,10 +8,16 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputType
 import android.util.Log
 import android.view.MenuItem
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -98,25 +104,76 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 			logout()
 		}
 
+		nav_view.getHeaderView(0).button_base.setOnClickListener {
+			editBase()
+		}
+
 		val authId = if (credentialsManager.hasValidCredentials()) {
 			Api(application).getUser().get(5, TimeUnit.SECONDS).id ?: null
 		} else null
 
 		preferences.edit().apply {
-			putInt("base_id", 1)
 			if (!authId.isNullOrEmpty()) {
 				putString("auth_id", authId)
 			}
 			apply()
 		}
 
-		AppDatabase.getInstance(application).activityLogDao().getAll().observeForever {
-			for (log in it) {
-				if (!log.synced) {
-					Log.d("Log", "${log.id} base:${log.base} arrived:${log.arrived} departed:${log.departed} logged_at:${log.loggedAt.toLocalDateTime()} points:${log.points} trivia:${log.trivia} clues:${log.clues} comment:${log.comment}")
-				}
+		if (preferences.getInt("base_id", -1) == -1) {
+			editBase()
+		}
+	}
+
+	fun editBase() {
+		val builder = AlertDialog.Builder(this)
+		builder.setTitle("Which base [1-3]")
+
+		// Set up the input
+		val input = EditText(this)
+		// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+		input.inputType = InputType.TYPE_CLASS_NUMBER
+		input.text = Editable.Factory().newEditable("")
+		input.imeOptions = EditorInfo.IME_ACTION_DONE
+		input.setOnEditorActionListener { _, i, _ ->
+			if (i == EditorInfo.IME_ACTION_DONE) {
+				closeKeyboard()
+				updateBaseId(input.text.toString())
+				true
+			} else {
+				false
 			}
 		}
+		builder.setView(input)
+
+		// Set up the buttons
+		builder.setPositiveButton("Save") { _, _ -> closeKeyboard();updateBaseId(input.text.toString()) }
+		builder.setNegativeButton("Cancel") { dialog, _ -> closeKeyboard();dialog.cancel() }
+
+		builder.show()
+		setEditTextFocused(input)
+	}
+
+	private fun updateBaseId(baseId: String) {
+		val base = Integer.valueOf(baseId)
+		if ((base >= 1) and (base <= 3)) {
+			preferences.edit().apply {
+				putInt("base_id", base)
+				apply()
+			}
+		} else {
+			Toast.makeText(this, "Enter base between 1-3", Toast.LENGTH_LONG).show()
+		}
+	}
+
+	private fun setEditTextFocused(input: EditText) {
+		val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+		inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+		input.requestFocus()
+	}
+
+	private fun closeKeyboard() {
+		val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+		inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
 	}
 
 	fun logout() {

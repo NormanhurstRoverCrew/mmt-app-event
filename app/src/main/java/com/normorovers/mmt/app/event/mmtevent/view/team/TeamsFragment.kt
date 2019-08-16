@@ -85,10 +85,10 @@ class TeamsFragment : Fragment() {
 		adapter.submitList(wanted)
 	}
 
-	override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-		inflater!!.inflate(R.menu.search_menu, menu)
+	override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+		inflater.inflate(R.menu.search_menu, menu)
 
-		val searchItem: MenuItem = menu!!.findItem(R.id.action_search)
+		val searchItem: MenuItem = menu.findItem(R.id.action_search)
 		val searchView: SearchView = searchItem.actionView as SearchView
 
 		searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
