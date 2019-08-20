@@ -15,9 +15,12 @@ import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeBodyInvalid
 import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeHeaderWrong
 import com.normorovers.mmt.app.event.mmtevent.qr.code.TicketCode
 import kotlinx.android.synthetic.main.activity_ticket.*
+import org.jetbrains.anko.doAsync
+import java.util.concurrent.Future
 
 class TicketActivity : AppCompatActivity() {
 	private var uid: String? = ""
+	private lateinit var paid: Future<PaymentResult>
 
 	companion object {
 		const val REQUEST_CODE = 2001
@@ -39,8 +42,15 @@ class TicketActivity : AppCompatActivity() {
 		}
 	}
 
+	override fun onStart() {
+		super.onStart()
+		if (!uid.isNullOrEmpty()) {
+			doAsync { afterInitWaitForPaymentStatus() }
+		}
+	}
+
 	private fun initWithUid(uid: String) {
-		val paid = TicketRepository(application).getPaid(uid, {})
+		paid = TicketRepository(application).getPaid(uid, {})
 
 		val ticket = TicketRepository(application).getByUidObservable(uid)
 
@@ -50,15 +60,22 @@ class TicketActivity : AppCompatActivity() {
 			(crew as TextView).text = it.user.crew
 		})
 
+
+	}
+
+	private fun afterInitWaitForPaymentStatus() {
+
 		val ps = (payment_status as TextView)
-		val payment_result = paid.get();
-		if (payment_result.paid) {
-			ps.text = getString(R.string.payment_paid)
-			ps.setTextColor(Color.GREEN)
-		} else {
-			ps.text = getString(R.string.payment_unpaid, payment_result.due)
-			ps.setTextColor(Color.RED)
-			MediaPlayer.create(application, R.raw.ding_error).start()
+		val paymentResult = paid.get() ?: return
+		runOnUiThread {
+			if (paymentResult.paid) {
+				ps.text = getString(R.string.payment_paid)
+				ps.setTextColor(Color.GREEN)
+			} else {
+				ps.text = getString(R.string.payment_unpaid, paymentResult.due)
+				ps.setTextColor(Color.RED)
+				MediaPlayer.create(application, R.raw.ding_error).start()
+			}
 		}
 	}
 

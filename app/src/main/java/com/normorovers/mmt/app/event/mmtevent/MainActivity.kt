@@ -34,7 +34,6 @@ import com.auth0.android.result.Credentials
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.normorovers.mmt.app.event.mmtevent.api.Api
-import com.normorovers.mmt.app.event.mmtevent.db.AppDatabase
 import com.normorovers.mmt.app.event.mmtevent.qr.QRScanMulti
 import com.normorovers.mmt.app.event.mmtevent.qr.QRScanOnce
 import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeBodyInvalid
@@ -98,7 +97,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 		nav_view.setNavigationItemSelectedListener(this)
 
-		supportFragmentManager.beginTransaction().replace(R.id.fragment_container, BaseFragment()).commit()
+		when (firebaseRemoteConfig.getString("landingPage")) {
+			"checkin" -> {
+				supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CheckInFragment()).commit()
+			}
+			"base" -> {
+				supportFragmentManager.beginTransaction().replace(R.id.fragment_container, BaseFragment()).commit()
+			}
+			else -> {
+				supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CheckInFragment()).commit()
+			}
+		}
+
 
 		nav_view.getHeaderView(0).button_logout.setOnClickListener {
 			logout()

@@ -14,7 +14,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/placeholder_teamname"
-        android:textSize="35dp"
+        android:textColor="@color/colorTextLight"
+        android:textSize="35sp"
         app:layout_constraintEnd_toStartOf="@+id/text_team_rego"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +28,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/placeholder_registration"
-        android:textSize="18dp"
+        android:textColor="@color/colorTextLight"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

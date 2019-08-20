@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.normorovers.mmt.app.event.mmtevent.db.TicketRepository
 import com.normorovers.mmt.app.event.mmtevent.view.team.EditTeamActivity
 import com.normorovers.mmt.app.event.mmtevent.view.team.TeamsFragment
 import com.normorovers.mmt.app.event.mmtevent.view.ticket.TicketActivity
@@ -28,6 +29,7 @@ class CheckInFragment : Fragment() {
     fun setButtonActions() {
         // Check in teams button opens fragment for checking in teams.
         (list_tickets as Button).setOnClickListener {
+            TicketRepository(activity!!.application).refreshData()
             activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.fragment_container,
                     TicketsFragment(null))?.addToBackStack(null)?.commit()
         }

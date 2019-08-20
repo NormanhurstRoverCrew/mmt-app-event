@@ -27,7 +27,7 @@ class TicketsViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun getAll(): LiveData<List<Ticket>> {
-        refreshData()
+//        refreshData()
         return repository.getAll()
     }
 
