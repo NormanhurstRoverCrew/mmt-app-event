@@ -65,7 +65,7 @@ class EditTeamActivity : AppCompatActivity() {
 					val tn = (text_team_name as TextView)
 					if (team.name.isNotEmpty()) {
 						tn.text = team.name
-						tn.setTextColor(Color.BLACK)
+						tn.setTextColor(Color.WHITE)
 					} else {
 						tn.text = getString(R.string.empty_team_name)
 						tn.setTextColor(Color.RED)
@@ -74,7 +74,7 @@ class EditTeamActivity : AppCompatActivity() {
 					val tr = (text_team_rego as TextView)
 					if (team.registration.isNotEmpty()) {
 						tr.text = team.registration
-						tr.setTextColor(Color.BLACK)
+						tr.setTextColor(Color.WHITE)
 					} else {
 						tr.text = getString(R.string.empty_team_registration)
 						tr.setTextColor(Color.RED)
