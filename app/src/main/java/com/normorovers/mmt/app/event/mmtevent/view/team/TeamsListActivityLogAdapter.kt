@@ -61,7 +61,7 @@ class TeamsListActivityLogAdapter(private val context: Context) : ListAdapter<Te
 		val baseId: Int = preferences.getInt("base_id", -1)
 
 		holder.observer = activityLogRepository.isAtBaseLive(currentTeam.id, baseId) { atBase ->
-			holder.root.setBackgroundColor(if (atBase) Color.YELLOW else Color.GREEN)
+			holder.root.setBackgroundColor(if (atBase) Color.rgb(212, 116, 0) else Color.GREEN)
 		}
 
 	}

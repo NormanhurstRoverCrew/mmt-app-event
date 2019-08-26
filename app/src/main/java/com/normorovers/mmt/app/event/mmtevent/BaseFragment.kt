@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.normorovers.mmt.app.event.mmtevent.view.base.ActivityLogActivity
-import com.normorovers.mmt.app.event.mmtevent.view.team.EditTeamActivity
+import com.normorovers.mmt.app.event.mmtevent.view.base.BaseTeamLogActivity
 import com.normorovers.mmt.app.event.mmtevent.view.team.TeamsFragment
 import kotlinx.android.synthetic.main.fragment_base.*
 import kotlinx.android.synthetic.main.fragment_check_in.list_teams
@@ -35,7 +35,7 @@ class BaseFragment : Fragment() {
 
 		// List tickets button opens fragment for showing the list of teams.
 		(scan_team as Button).setOnClickListener {
-			activity?.startActivity(Intent(context, EditTeamActivity::class.java))
+			activity?.startActivity(Intent(context, BaseTeamLogActivity::class.java))
 		}
 
 		// List tickets button opens fragment for showing the list of teams.

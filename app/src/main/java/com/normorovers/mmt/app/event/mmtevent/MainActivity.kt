@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 	fun editBase() {
 		val builder = AlertDialog.Builder(this)
-		builder.setTitle("Which base [1-3]")
+		builder.setTitle("Which base [1-11]")
 
 		// Set up the input
 		val input = EditText(this)
@@ -165,13 +165,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 	private fun updateBaseId(baseId: String) {
 		val base = Integer.valueOf(baseId)
-		if ((base >= 1) and (base <= 3)) {
+		if ((base >= 1) and (base <= 11)) {
 			preferences.edit().apply {
 				putInt("base_id", base)
 				apply()
 			}
 		} else {
-			Toast.makeText(this, "Enter base between 1-3", Toast.LENGTH_LONG).show()
+			Toast.makeText(this, "fail: Enter base between 1-11", Toast.LENGTH_LONG).show()
 		}
 	}
 

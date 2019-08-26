@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -15,9 +16,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.normorovers.mmt.app.event.mmtevent.R
 import com.normorovers.mmt.app.event.mmtevent.db.Team
 import com.normorovers.mmt.app.event.mmtevent.db.TeamRepository
+import com.normorovers.mmt.app.event.mmtevent.qr.QRScanOnce
+import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeBodyInvalid
+import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeHeaderWrong
+import com.normorovers.mmt.app.event.mmtevent.qr.code.TeamCode
 import com.normorovers.mmt.app.event.mmtevent.view.team.TeamFragment
 import kotlinx.android.synthetic.main.activity_base_team_log.*
 import kotlinx.android.synthetic.main.content_base_team_log.*
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.doAsyncResult
 
 private const val ARG_NAME = "name"
@@ -45,9 +51,20 @@ class BaseTeamLogActivity : AppCompatActivity() {
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 		intent?.let {
-			uid = it.getStringExtra(ARG_UID) ?: throw Error("No UID passed to activity")
+			uid = it.getStringExtra(ARG_UID)
 		}
 
+		if (uid.isNullOrEmpty()) {
+			// start the single scanner activity to get a team
+
+			startActivityForResult(Intent(this, QRScanOnce::class.java), QRScanOnce.REQUEST_CODE)
+
+		} else {
+			initWithUid()
+		}
+	}
+
+	private fun initWithUid() {
 		val teamDb = doAsyncResult {
 			return@doAsyncResult TeamRepository(application).getByUid(uid!!)
 		}
@@ -249,6 +266,38 @@ class BaseTeamLogActivity : AppCompatActivity() {
 	private fun closeKeyboard() {
 		val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 		inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+	}
+
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+		when (requestCode) {
+			QRScanOnce.REQUEST_CODE -> { //For opening a team
+				when (resultCode) {
+					RESULT_OK -> {
+						val scannedData = data?.getStringExtra("data")!!
+						Log.d("ScanBaseActivityLog", scannedData)
+
+						try {
+							val teamUid = TeamCode().parse(scannedData)
+							doAsync {
+								val team = TeamRepository(application).getByUid(teamUid)
+
+								val i = Intent(application, BaseTeamLogActivity::class.java)
+								i.putExtra("uid", team.uid)
+								startActivity(i)
+								finish()
+							}
+						} catch (e: CodeHeaderWrong) {
+
+						} catch (e: CodeBodyInvalid) {
+
+						}
+					}
+					RESULT_CANCELED -> {
+						finish()
+					}
+				}
+			}
+		}
 	}
 
 }
