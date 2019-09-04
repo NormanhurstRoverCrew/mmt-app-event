@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -34,6 +35,8 @@ import com.auth0.android.result.Credentials
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.normorovers.mmt.app.event.mmtevent.api.Api
+import com.normorovers.mmt.app.event.mmtevent.db.TeamRepository
+import com.normorovers.mmt.app.event.mmtevent.db.TicketRepository
 import com.normorovers.mmt.app.event.mmtevent.qr.QRScanMulti
 import com.normorovers.mmt.app.event.mmtevent.qr.QRScanOnce
 import com.normorovers.mmt.app.event.mmtevent.qr.code.CodeBodyInvalid
@@ -118,21 +121,33 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 			editBase()
 		}
 
-		val authId = if (credentialsManager.hasValidCredentials()) {
-			Api(application).getUser().get(5, TimeUnit.SECONDS).id ?: null
-		} else null
+		if (isConnected) {
+			val authId = if (credentialsManager.hasValidCredentials()) {
+				Api(application).getUser().get(5, TimeUnit.SECONDS).id ?: null
+			} else null
 
-		preferences.edit().apply {
-			if (!authId.isNullOrEmpty()) {
-				putString("auth_id", authId)
+			preferences.edit().apply {
+				if (!authId.isNullOrEmpty()) {
+					putString("auth_id", authId)
+				}
+				apply()
 			}
-			apply()
 		}
 
 		if (preferences.getInt("base_id", -1) == -1) {
 			editBase()
 		}
+
+		TeamRepository(application).refreshData()
+		TicketRepository(application).refreshData()
 	}
+
+	//adds extra method to Context to tell us if the network is connected or not.
+	val Context.isConnected: Boolean
+		get() {
+			return (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+					.activeNetworkInfo?.isConnected == true
+		}
 
 	fun editBase() {
 		val builder = AlertDialog.Builder(this)
@@ -306,6 +321,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+		super.onActivityResult(requestCode, resultCode, data)
 		when (requestCode) {
 			QRScanOnce.REQUEST_CODE -> {
 				when (resultCode) {

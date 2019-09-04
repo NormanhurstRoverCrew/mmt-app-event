@@ -44,6 +44,8 @@ class TeamsListActivityLogAdapter(private val context: Context) : ListAdapter<Te
 
 		holder.textViewDescription?.text = ""
 
+		holder.textViewTeamId?.text = currentTeam.id.toString()
+
 		holder.root.setOnClickListener {
 			val i = Intent(context, BaseTeamLogActivity::class.java)
 			i.putExtra("uid", currentTeam.uid)
@@ -74,6 +76,7 @@ class TeamsListActivityLogAdapter(private val context: Context) : ListAdapter<Te
 		val textViewTitle: TextView? = itemView.findViewById(R.id.title)
 		val textViewRego: TextView? = itemView.findViewById(R.id.registration)
 		val textViewDescription: TextView? = itemView.findViewById(R.id.description)
+		val textViewTeamId: TextView? = itemView.findViewById(R.id.team_id)
 
 		lateinit var observer: (logs: List<ActivityLog>) -> Unit
 

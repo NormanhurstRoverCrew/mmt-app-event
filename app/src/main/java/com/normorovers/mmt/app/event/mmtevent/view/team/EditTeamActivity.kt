@@ -80,6 +80,8 @@ class EditTeamActivity : AppCompatActivity() {
 						tr.setTextColor(Color.RED)
 					}
 
+					(text_team_id as TextView).text = teamId.toString()
+
 					(text_team_name as TextView).setOnClickListener { editTeamNameDialogue(team.name) }
 					(text_team_rego as TextView).setOnClickListener { editTeamRegoDialogue(team.registration) }
 				})
@@ -190,6 +192,7 @@ class EditTeamActivity : AppCompatActivity() {
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+		super.onActivityResult(requestCode, resultCode, data)
 		when (requestCode) {
 			QRScanMulti.REQUEST_CODE -> { //For adding tickets to our team
 				when (resultCode) {

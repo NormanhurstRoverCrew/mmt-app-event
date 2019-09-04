@@ -38,6 +38,8 @@ class TeamsListEditAdapter(private val context: Context) : ListAdapter<Team, Tea
 			"[Rego: EMPTY]"
 		}
 
+		holder.textViewTeamId?.text = currentTeam.id.toString()
+
 		val nTicketsInTeam = doAsyncResult {
 			AppDatabase.getInstance(context).teamDao()
 					.countTicketsInTeam(currentTeam.id)
@@ -65,6 +67,7 @@ class TeamsListEditAdapter(private val context: Context) : ListAdapter<Team, Tea
 		val textViewTitle: TextView? = itemView.findViewById(R.id.title)
 		val textViewRego: TextView? = itemView.findViewById(R.id.registration)
 		val textViewDescription: TextView? = itemView.findViewById(R.id.description)
+		val textViewTeamId: TextView? = itemView.findViewById(R.id.team_id)
 	}
 
 	private class TeamDiffCallback : DiffUtil.ItemCallback<Team>() {

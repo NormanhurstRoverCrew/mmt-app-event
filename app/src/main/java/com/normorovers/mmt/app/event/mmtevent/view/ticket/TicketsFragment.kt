@@ -85,7 +85,9 @@ class TicketsFragment(val teamId: Long?) : Fragment() {
 		val wanted = if (!query.isNullOrEmpty()) {
 			val rQuery = query.toLowerCase()
 			fullListTickets.filter {
-				it.user.name.toLowerCase().contains(rQuery) or (it.user.crew?.toLowerCase()!!.contains(rQuery)) or it.user.mobile.replace("\\s".toRegex(), "").contains(rQuery)
+				it.user.name.toLowerCase().contains(rQuery) or
+						(!it.user.crew.isNullOrBlank() && it.user.crew.toLowerCase().contains(rQuery)) or
+						(!it.user.mobile.isNullOrBlank() && it.user.mobile.replace("\\s".toRegex(), "").contains(rQuery))
 			}.toList()
 		} else {
 			fullListTickets

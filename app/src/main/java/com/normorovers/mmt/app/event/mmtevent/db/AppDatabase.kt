@@ -6,11 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [Team::class, Ticket::class, ActivityLog::class], exportSchema = false, version = 5)
+@Database(entities = [Team::class, Ticket::class, ActivityLog::class], exportSchema = false, version = 7)
 @TypeConverters(Converter::class)
 abstract class AppDatabase : RoomDatabase() {
     companion object : SingletonHolder<AppDatabase, Context>({
-        Room.databaseBuilder(it, AppDatabase::class.java, "mmt19_develpment.db")
+		Room.databaseBuilder(it, AppDatabase::class.java, "mmt19_development.db")
                 .fallbackToDestructiveMigration()
                 .build()
     })

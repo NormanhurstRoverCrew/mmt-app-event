@@ -77,7 +77,9 @@ class TeamsFragment : Fragment() {
 		val wanted = if (!query.isNullOrEmpty()) {
 			val validQuery = query.toLowerCase()
 			fullListTeams.filter {
-				it.name.toLowerCase().contains(validQuery) or it.registration.toLowerCase().contains(validQuery)
+				it.name.toLowerCase().contains(validQuery) or
+						it.registration.toLowerCase().contains(validQuery) or
+						it.id.toString().contains(validQuery)
 			}.toList()
 		} else {
 			fullListTeams

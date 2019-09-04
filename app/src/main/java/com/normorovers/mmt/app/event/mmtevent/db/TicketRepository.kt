@@ -102,10 +102,9 @@ class TicketRepository(private val application: Application) {
 						Constraints.Builder()
 								.setRequiredNetworkType(NetworkType.CONNECTED)
 								.build())
-				.addTag("test")
 				.build()
 
-		WorkManager.getInstance(application).enqueue(pullWorker)
+		WorkManager.getInstance(application).enqueueUniqueWork("com.normorovers.mmt.app.event.ticket_pull", ExistingWorkPolicy.REPLACE, pullWorker)
 	}
 
 	fun refreshTicket(id: Long) {
@@ -119,7 +118,6 @@ class TicketRepository(private val application: Application) {
 						Constraints.Builder()
 								.setRequiredNetworkType(NetworkType.CONNECTED)
 								.build())
-				.addTag("test")
 				.build()
 
 		WorkManager.getInstance(application).enqueue(pullWorker)
